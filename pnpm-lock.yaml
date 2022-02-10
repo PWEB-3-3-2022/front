@@ -1,8 +1,8 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@sveltejs/vite-plugin-svelte': ^1.0.0-next.30
-  svelte: ^3.44.0
+  '@sveltejs/vite-plugin-svelte': ^1.0.0-next.37
+  svelte: ^3.46.4
   vite: ^2.8.0
 
 devDependencies:
@@ -333,8 +333,8 @@ packages:
       supports-preserve-symlinks-flag: 1.0.0
     dev: true
 
-  /rollup/2.67.1:
-    resolution: {integrity: sha512-1Sbcs4OuW+aD+hhqpIRl+RqooIpF6uQcfzU/QSI7vGkwADY6cM4iLsBGRM2CGLXDTDN5y/yShohFmnKegSPWzg==}
+  /rollup/2.67.2:
+    resolution: {integrity: sha512-hoEiBWwZtf1QdK3jZIq59L0FJj4Fiv4RplCO4pvCRC86qsoFurWB4hKQIjoRf3WvJmk5UZ9b0y5ton+62fC7Tw==}
     engines: {node: '>=10.0.0'}
     hasBin: true
     optionalDependencies:
@@ -387,7 +387,7 @@ packages:
       esbuild: 0.14.21
       postcss: 8.4.6
       resolve: 1.22.0
-      rollup: 2.67.1
+      rollup: 2.67.2
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
