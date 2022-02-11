@@ -1,5 +1,7 @@
 # TCflix frontend
 
+![publish workflow](https://github.com/PWEB-3-3-2022/front/actions/workflows/publish.yml/badge.svg)
+
 ## Setup for development
 
 ### Prerequisites
