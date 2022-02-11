@@ -1,7 +1,7 @@
 <script>
-    import MosaicTile from "./MosaicTile.svelte";
+  import MosaicTile from './MosaicTile.svelte';
 
-    export let items = [];
+  export let items = [];
 </script>
 
 <div class="mosaic">

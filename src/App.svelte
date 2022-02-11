@@ -1,10 +1,10 @@
 <script>
-    import Mosaic from "./lib/Mosaic.svelte";
+  import Mosaic from './lib/Mosaic.svelte';
 
-    let items = [];
-    for (let i = 0; i < 20; i++) {
-        items.push("https://api.lorem.space/image/movie?w=180&h=220");
-    }
+  const items = [];
+  for (let i = 0; i < 20; i += 1) {
+    items.push('https://api.lorem.space/image/movie?w=180&h=220');
+  }
 </script>
 
 <main>
