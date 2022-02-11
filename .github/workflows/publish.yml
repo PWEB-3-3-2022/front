@@ -23,7 +23,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Build
-        run: pnpm install && pnpm run build
+        run: pnpm install && pnpm run build -- --base /front/
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
