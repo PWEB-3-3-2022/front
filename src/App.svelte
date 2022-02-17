@@ -1,5 +1,6 @@
 <script>
   import Mosaic from './lib/Mosaic.svelte';
+  import TailwindCss from './lib/TailwindCSS.svelte';
 
   const items = [];
   for (let i = 0; i < 20; i += 1) {
@@ -8,6 +9,7 @@
 </script>
 
 <main>
+    <TailwindCss />
     <Mosaic {items}/>
 </main>
 

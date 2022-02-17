@@ -11,11 +11,14 @@
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.37",
+    "autoprefixer": "^10.4.2",
     "eslint": "^8.8.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-svelte3": "^3.4.0",
+    "postcss": "^8.4.6",
     "svelte": "^3.46.4",
+    "tailwindcss": "^3.0.23",
     "vite": "^2.8.1"
   }
 }
