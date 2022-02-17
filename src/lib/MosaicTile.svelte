@@ -5,8 +5,8 @@
 <div class="mosaic-tile">
     <img class="thumbnail" src={item} alt="thumbnail">
     <div class="mosaic-tile-details">
-        <h4>title</h4>
-        <span>year</span>
+        <h4 class="text-xl">title</h4>
+        <span class="text-sm">year</span>
     </div>
 </div>
 
