@@ -1,11 +1,18 @@
 <script>
   import Mosaic from './lib/Mosaic.svelte';
+  import Navbar from './lib/Navbar.svelte';
+  import Sidebar from './lib/Sidebar.svelte';
 
   const items = [];
   for (let i = 0; i < 20; i += 1) {
     items.push('https://api.lorem.space/image/movie?w=180&h=220');
   }
+
+  let open = false;
 </script>
+
+<Sidebar bind:open/>
+<Navbar bind:sidebar={open}/>
 
 <main>
     <Mosaic {items}/>
