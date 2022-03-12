@@ -3,7 +3,7 @@
 </script>
 
 <div class="mosaic-tile">
-    <img class="thumbnail" src={item} alt="thumbnail">
+    <img alt="thumbnail" class="thumbnail" src={item}>
     <div class="mosaic-tile-details">
         <h4>title</h4>
         <span>year</span>

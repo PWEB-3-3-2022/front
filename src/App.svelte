@@ -1,14 +1,14 @@
 <script>
   import Mosaic from './lib/Mosaic.svelte';
-  import Navbar from './lib/Navbar.svelte'
-	import Sidebar from './lib/Sidebar.svelte'
+  import Navbar from './lib/Navbar.svelte';
+  import Sidebar from './lib/Sidebar.svelte';
 
   const items = [];
   for (let i = 0; i < 20; i += 1) {
     items.push('https://api.lorem.space/image/movie?w=180&h=220');
   }
 
-  let open = false
+  let open = false;
 </script>
 
 <Sidebar bind:open/>
@@ -17,10 +17,6 @@
 <main>
     <Mosaic {items}/>
 </main>
-
-<svelte:head>
-	<link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet"/>
-</svelte:head>
 
 <style>
     :root {

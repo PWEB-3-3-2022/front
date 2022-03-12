@@ -1,9 +1,9 @@
-<svg width=auto height=30>
-	<text x=0 y=20>TCFLIX</text>
+<svg height=30 width=auto>
+    <text x=0 y=20>TCFLIX</text>
 </svg>
 
 <style>
-	text {
-		fill: currentColor
-	}
+    text {
+        fill: currentColor
+    }
 </style>
