@@ -1,9 +1,5 @@
-<svg height=30 width=auto>
-    <text x=0 y=20>TCFLIX</text>
-</svg>
+<script>
+  import logo from '../assets/tcflix_logo.png';
+</script>
 
-<style>
-    text {
-        fill: currentColor
-    }
-</style>
+<img src={logo} alt="logo" width="119" height="45">
