@@ -1,27 +1,27 @@
 <script>
-  import Mosaic from './lib/Mosaic.svelte';
+  import Router from 'svelte-spa-router';
+  import Home from './pages/Home.svelte';
+  import About from './pages/About.svelte';
+
   import Navbar from './lib/Navbar.svelte';
   import Sidebar from './lib/Sidebar.svelte';
 
-  const items = [];
-  for (let i = 0; i < 20; i += 1) {
-    items.push('https://api.lorem.space/image/movie?w=180&h=220');
-  }
-
+  // For the sidebar
   let open = false;
+
+  const routes = {
+    '/': Home,
+    '/about': About,
+  };
+
+  // Triggered when changing page
+  function routeLoaded() {
+    // Close the sidebar
+    open = false;
+  }
 </script>
 
 <Sidebar bind:open/>
 <Navbar bind:sidebar={open}/>
 
-<main>
-    <Mosaic {items}/>
-</main>
-
-<style>
-    main {
-        text-align: center;
-        padding: 1em 20em;
-        margin: 0 auto;
-    }
-</style>
+<Router {routes} on:routeLoaded={routeLoaded}/>
