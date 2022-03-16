@@ -1,12 +1,12 @@
 <script>
-  export let item;
+  export let media;
 </script>
 
 <div class="mosaic-tile">
-    <img alt="thumbnail" class="thumbnail" src={item}>
+    <img alt="thumbnail" class="thumbnail" src={media.poster}>
     <div class="mosaic-tile-details">
-        <h4 class="text-xl">title</h4>
-        <span class="text-sm">year</span>
+        <h4 class="text-xl">{media.title}</h4>
+        <span class="text-sm">{media.year}</span>
     </div>
 </div>
 

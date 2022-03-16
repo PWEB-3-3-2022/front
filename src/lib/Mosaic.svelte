@@ -1,12 +1,12 @@
 <script>
   import MosaicTile from './MosaicTile.svelte';
 
-  export let items = [];
+  export let medias = [];
 </script>
 
 <div class="mosaic">
-    {#each items as item}
-        <MosaicTile {item}/>
+    {#each medias as media}
+        <MosaicTile {media}/>
     {:else}
         <p>Loading ...</p>
     {/each}

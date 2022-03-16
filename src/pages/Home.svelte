@@ -1,14 +1,14 @@
 <script>
   import Mosaic from '../lib/Mosaic.svelte';
 
-  const items = [];
+  const medias = [];
   for (let i = 0; i < 20; i += 1) {
-    items.push('https://api.lorem.space/image/movie?w=180&h=220');
+    medias.push({ poster: 'https://api.lorem.space/image/movie?w=180&h=220' });
   }
 </script>
 
 <main>
-    <Mosaic {items}/>
+    <Mosaic {medias}/>
 </main>
 
 <style>
