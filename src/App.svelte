@@ -1,6 +1,7 @@
 <script>
   import Router from 'svelte-spa-router';
   import Home from './pages/Home.svelte';
+  import Search from './pages/Search.svelte';
   import About from './pages/About.svelte';
 
   import Navbar from './lib/Navbar.svelte';
@@ -11,6 +12,7 @@
 
   const routes = {
     '/': Home,
+    '/search': Search,
     '/about': About,
   };
 
