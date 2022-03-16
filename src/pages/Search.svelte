@@ -1,17 +1,18 @@
 <script>
   import { querystring } from 'svelte-spa-router';
+  import { derived } from 'svelte/store';
   import Mosaic from '../lib/Mosaic.svelte';
+  import { searchMedias } from '../api';
 
+  let query = new URLSearchParams($querystring).get('query');
   // Parse query string parameters everytime they change
-  $: params = new URLSearchParams($querystring);
-
-  const items = [];
-  for (let i = 0; i < 4; i += 1) {
-    items.push('https://api.lorem.space/image/movie?w=180&h=220');
-  }
+  const searchResults = derived(querystring, (querystring_, set) => {
+    query = new URLSearchParams(querystring_).get('query');
+    searchMedias(query).then(set).catch((e) => console.log(`Failed to search for medias : ${e}`));
+  });
 </script>
 
 <main>
-    <span>Results for "{params.get('query')}"</span>
-    <Mosaic {items}/>
+    <span>Results for "{query}"</span>
+    <Mosaic medias={$searchResults}/>
 </main>
