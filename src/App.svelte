@@ -3,6 +3,7 @@
   import Home from './pages/Home.svelte';
   import Search from './pages/Search.svelte';
   import About from './pages/About.svelte';
+  import Login from './pages/Login.svelte';
 
   import Navbar from './lib/Navbar.svelte';
   import Sidebar from './lib/Sidebar.svelte';
@@ -15,6 +16,7 @@
     '/': Home,
     '/search': Search,
     '/about': About,
+    '/login': Login,
   };
 
   // Triggered when changing page
@@ -28,18 +30,18 @@
 <Navbar bind:sidebar={open}/>
 
 <div id="main">
-  <Router {routes} on:routeLoaded={routeLoaded}/>
+    <Router {routes} on:routeLoaded={routeLoaded}/>
 </div>
 
 <Footer/>
 
 <style>
-    #main{
-    min-height: calc(100vh - 1rem - 45px - 220px);
-    /*100vh = 100% of a screen
-      1rem = 2*time padding of navbar
-      45px = height of navbar when logo take all the space (Problem on mobile where logo disapear ?)
-      220px = fixed height of footer    
-    */
-  }
+    #main {
+        min-height: calc(100vh - 1rem - 45px - 220px);
+        /*100vh = 100% of a screen
+          1rem = 2*time padding of navbar
+          45px = height of navbar when logo take all the space (Problem on mobile where logo disapear ?)
+          220px = fixed height of footer
+        */
+    }
 </style>
