@@ -1,8 +1,6 @@
 <script>
   import { push } from 'svelte-spa-router';
-import { null_to_empty } from 'svelte/internal';
   import { searchMedias } from '../api';
-
 
   let query = '';
 
@@ -11,36 +9,31 @@ import { null_to_empty } from 'svelte/internal';
     push(`/search?query=${query}`);
   }
 
-  function onClick(e) {
-    e.preventDefault();
-    push(`/search?query=${query}`);
-  }
-
-  function onKeyUp(e){
-    let autocomWrapper = document.querySelector("#autocom-box");
-    if (`${query}` != ''){
-        searchMedias(`${query}`)
-        .then((result) => function(result){
-                autocomWrapper.innerHTML = '';
-                if (result.length != 0){
-                    autocomWrapper.style.display = "block";
-                    result.forEach(element => {
-                        var newLi = document.createElement("li");
-                        newLi.onclick = function(event) {
-                            push(`/search?query=`+element.title);
-                        }
-                        newLi.id = "autocom-li";
-                        var newContent = document.createTextNode(element.title);
-                        newLi.appendChild(newContent);
-                        autocomWrapper.appendChild(newLi);
-                    });
-                }else{
-                    autocomWrapper.style.display = "none";
-                }
-            }(result))
-        .catch(error => console.log(error))
-    }else{
-        autocomWrapper.style.display = "none";
+  function onKeyUp() {
+    const autocomWrapper = document.querySelector('#autocom-box');
+    if (`${query}` !== '') {
+      searchMedias(`${query}`)
+        .then((result) => (function UpdateAutocom() {
+          autocomWrapper.innerHTML = '';
+          if (result.length !== 0) {
+            autocomWrapper.style.display = 'block';
+            result.forEach((element) => {
+              const newLi = document.createElement('li');
+              newLi.onclick = function redirect() {
+                push(`/search?query=${element.title}`);
+              };
+              newLi.id = 'autocom-li';
+              const newContent = document.createTextNode(element.title);
+              newLi.appendChild(newContent);
+              autocomWrapper.appendChild(newLi);
+            });
+          } else {
+            autocomWrapper.style.display = 'none';
+          }
+        }()))
+        .catch((error) => console.error(error));
+    } else {
+      autocomWrapper.style.display = 'none';
     }
   }
 </script>
