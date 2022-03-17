@@ -6,6 +6,7 @@
 
   import Navbar from './lib/Navbar.svelte';
   import Sidebar from './lib/Sidebar.svelte';
+  import Footer from './lib/Footer.svelte';
 
   // For the sidebar
   let open = false;
@@ -23,7 +24,17 @@
   }
 </script>
 
+<style>
+  :global(html, body, #app){
+    position: relative;
+    min-height: 100vh;
+  }
+  :global(main){
+    min-height: 66.6vh;
+  }
+</style>
+
 <Sidebar bind:open/>
 <Navbar bind:sidebar={open}/>
-
 <Router {routes} on:routeLoaded={routeLoaded}/>
+<Footer/>
