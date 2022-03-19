@@ -33,8 +33,7 @@
 <style>
     .footer {
         width: 100%;
-        bottom: 0;
-        height: auto;
+        height: 220px;
         background-color: #070617;
     }
 
