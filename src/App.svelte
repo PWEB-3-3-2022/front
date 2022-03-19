@@ -24,17 +24,9 @@
   }
 </script>
 
-<style>
-  :global(html, body, #app){
-    position: relative;
-    min-height: 100vh;
-  }
-  :global(main){
-    min-height: 66.6vh;
-  }
-</style>
-
 <Sidebar bind:open/>
 <Navbar bind:sidebar={open}/>
+
 <Router {routes} on:routeLoaded={routeLoaded}/>
+
 <Footer/>
