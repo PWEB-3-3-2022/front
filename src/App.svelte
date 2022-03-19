@@ -24,15 +24,22 @@
   }
 </script>
 
-<style>
-  :global(main){
-    min-height: 70vh;
-  }
-</style>
-
 <Sidebar bind:open/>
 <Navbar bind:sidebar={open}/>
 
-<Router {routes} on:routeLoaded={routeLoaded}/>
+<div id="main">
+  <Router {routes} on:routeLoaded={routeLoaded}/>
+</div>
 
 <Footer/>
+
+<style>
+    #main{
+    min-height: calc(100vh - 1rem - 45px - 220px);
+    /*100vh = 100% of a screen
+      1rem = 2*time padding of navbar
+      45px = height of navbar when logo take all the space (Problem on mobile where logo disapear ?)
+      220px = fixed height of footer    
+    */
+  }
+</style>
