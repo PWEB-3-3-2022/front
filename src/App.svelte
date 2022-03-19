@@ -6,6 +6,7 @@
 
   import Navbar from './lib/Navbar.svelte';
   import Sidebar from './lib/Sidebar.svelte';
+  import Footer from './lib/Footer.svelte';
 
   // For the sidebar
   let open = false;
@@ -27,3 +28,5 @@
 <Navbar bind:sidebar={open}/>
 
 <Router {routes} on:routeLoaded={routeLoaded}/>
+
+<Footer/>
