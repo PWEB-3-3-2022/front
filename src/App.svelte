@@ -24,6 +24,12 @@
   }
 </script>
 
+<style>
+  :global(main){
+    min-height: 70vh;
+  }
+</style>
+
 <Sidebar bind:open/>
 <Navbar bind:sidebar={open}/>
 
