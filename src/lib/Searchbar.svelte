@@ -1,5 +1,4 @@
 <script>
-
   import { push } from 'svelte-spa-router';
 
   let query = '';
@@ -8,11 +7,15 @@
     e.preventDefault();
     push(`/search?query=${query}`);
   }
+
+  function onKeyUp() {
+    push(`/search?query=${query}`);
+  }
 </script>
 
 <div class="searchContainer">
     <form on:submit={onSearch}>
-        <input type="text" id="search-input" bind:value={query} name="query" placeholder="Search...">
+        <input type="text" id="search-input" bind:value={query} on:keyup={onKeyUp} name="query" placeholder="Search...">
     </form>
 </div>
 
