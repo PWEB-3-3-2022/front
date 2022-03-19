@@ -32,7 +32,6 @@
 
 <style>
     .footer {
-        flex-shrink: 0;
         width: 100%;
         height: 220px;
         background-color: #070617;
