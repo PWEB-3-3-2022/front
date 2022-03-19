@@ -2,25 +2,32 @@
   import Logo from './Logo.svelte';
   import Hamburger from './Hamburger.svelte';
   import Searchbar from './Searchbar.svelte';
-  import Login_button from './Login_button.svelte';
 
   export let sidebar = false;
 </script>
 
 <header class="bg-black p-2 text-xl text-red-600">
-    <nav class="flex">
-        <Hamburger bind:open={sidebar}/>
-        <Logo/>
-        <Searchbar/>
-        <div class="login">
-           <Login_button/>
+    <nav class="flex flex-flow flex-nowrap justify-between items-center gap-1">
+        <div class="flex-none">
+            <Hamburger bind:open={sidebar}/>
         </div>
+        <div class="flex-none">
+            <Logo/>
+        </div>
+        <div class="basis-4/6 grow ml-60">
+            <Searchbar/>
+        </div>
+        <a href="#/login" class="loginButton flex-none">S'identifier</a>
     </nav>
 </header>
 
 <style>
-  .login {
-    position: absolute;
-    right: 100px;
-  }
+    .loginButton {
+        background-color: #e50914;
+        color: white;
+        padding: 7px 15px;
+        font-size: 1rem;
+        border-radius: 3px;
+        float: none;
+    }
 </style>

@@ -1,9 +1,23 @@
-// const API_BASE = 'https://cors-anywhere.herokuapp.com/https://tcflix.herokuapp.com';
-const API_BASE = process.env.NODE_ENV === 'production'
-  ? 'https://tcflix.herokuapp.com'
-  : 'http://127.0.0.1:3001';
+const API_BASE = 'https://tcflix.herokuapp.com';
+// const API_BASE = process.env.NODE_ENV === 'production'
+//   ? 'https://tcflix.herokuapp.com'
+//   : 'http://127.0.0.1:3001';
 
 export async function searchMedias(query) {
   const response = await fetch(`${API_BASE}/medias/search?query=${query}`);
   return response.json();
+}
+
+export async function login(payload) {
+  return fetch(
+    `${API_BASE}/auth/login`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    },
+  );
 }
