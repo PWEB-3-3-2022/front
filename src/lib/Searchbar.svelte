@@ -13,27 +13,20 @@
   }
 </script>
 
-<div class="searchContainer">
-    <form on:submit={onSearch}>
-        <input type="text" id="search-input" bind:value={query} on:keyup={onKeyUp} name="query" placeholder="Search...">
-    </form>
-</div>
+<form on:submit={onSearch}>
+    <input type="text" id="search-input" bind:value={query} on:keyup={onKeyUp} name="query" placeholder="Search...">
+</form>
 
 <style>
-    .searchContainer {
-        display: block;
-        float: left;
-        padding-left: 33%;
-    }
-
     #search-input {
         background-image: url("https://img.icons8.com/ios-glyphs/30/000000/search--v1.png");
         background-repeat: no-repeat;
         text-decoration: none;
         padding-left: 30px;
-        width: 500px;
+        width: 300px;
         font-size: 17px;
         color: black;
         text-align: left;
+        border-radius: 3px;
     }
 </style>
