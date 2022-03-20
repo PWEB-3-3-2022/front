@@ -21,3 +21,17 @@ export async function login(payload) {
     },
   );
 }
+
+export async function register(payload) {
+  return fetch(
+    `${API_BASE}/auth/register`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+}
