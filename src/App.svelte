@@ -4,6 +4,7 @@
   import Search from './pages/Search.svelte';
   import About from './pages/About.svelte';
   import Login from './pages/Login.svelte';
+  import Register from './pages/Register.svelte';
 
   import Navbar from './lib/Navbar.svelte';
   import Sidebar from './lib/Sidebar.svelte';
@@ -17,6 +18,7 @@
     '/search': Search,
     '/about': About,
     '/login': Login,
+    '/register': Register,
   };
 
   // Triggered when changing page

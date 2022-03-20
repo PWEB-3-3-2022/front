@@ -973,10 +973,6 @@
         flex: 0 0 1
     }
 
-    .hybrid-login-form .login-form {
-        margin-bottom: 0
-    }
-
     .hybrid-login-form .facebookForm .btn-submit {
         margin-top: 16px;
         min-height: 0
