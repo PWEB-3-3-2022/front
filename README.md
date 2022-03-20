@@ -1,6 +1,10 @@
+![tcflix logo](src/assets/tcflix_logo.png)
+
 # TCflix frontend
 
 ![publish workflow](https://github.com/PWEB-3-3-2022/front/actions/workflows/publish.yml/badge.svg)
+
+Published at https://pweb-3-3-2022.github.io/front/
 
 ## Setup for development
 
