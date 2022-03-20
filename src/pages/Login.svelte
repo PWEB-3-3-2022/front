@@ -107,7 +107,7 @@
                     <a class="link login-help-link" href="#/LoginHelp" target="_self">Besoin d&#x27;aide ?</a>
                 </div>
 
-                {#if Object.keys(errors).length > 0}
+                {#if errors.length > 0}
                     <ul class="errors">
                         {#each errors as error}
                             <li>{error}</li>
