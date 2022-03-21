@@ -35,3 +35,14 @@ export async function register(payload) {
     },
   );
 }
+
+export function getCookie(user) {
+  const cookieArr = document.cookie.split(';');
+  for (let i = 0; i < cookieArr.length; i += 1) {
+    const cookiePair = cookieArr[i].split('=');
+    if (user === cookiePair[0].trim()) {
+      return decodeURIComponent(cookiePair[1]);
+    }
+  }
+  return null;
+}
