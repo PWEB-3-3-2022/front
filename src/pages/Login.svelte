@@ -1,6 +1,10 @@
 <script>
   import * as api from '../api';
 
+  if (api.getCookie("authToken") !== null && api.getCookie("authToken") !== "") {
+    window.location.href="#";
+  }
+
   let email = '';
   let errors = {};
   let authSuccess = '';
@@ -28,13 +32,16 @@
         // Handle errors here
         if (response.ok) {
           const body = await response.json();
-          if (body.check === 'NOPE') {
+          if (body.hasOwnProperty("error") && body.error === "NoAccountError") {
             errors.push('Invalid credentials');
-          } else if (body.check === 'noice') {
+          } else if (body.hasOwnProperty("authToken") && body.authToken !== "") {
             authSuccess = 'Successfully logged in!';
+            document.cookie = `authToken=${body.authToken}; path=/; expires=${body.expires}`;
           }
         } else if (response.status === 400) {
           errors.push('Bad Request');
+        } else if (response.status === 500) {
+          errors.push('Internal Server Error: could not log in.');
         } else {
           errors.push(`Error code ${response.status}`);
         }
