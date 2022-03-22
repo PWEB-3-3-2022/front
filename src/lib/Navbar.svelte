@@ -2,6 +2,9 @@
   import Logo from './Logo.svelte';
   import Hamburger from './Hamburger.svelte';
   import Searchbar from './Searchbar.svelte';
+  import AccountDropdown from './AccountDropdown.svelte';
+  import * as api from '../api';
+  import '../global.css';
 
   export let sidebar = false;
 </script>
@@ -17,7 +20,11 @@
         <div class="basis-4/6 grow ml-60">
             <Searchbar/>
         </div>
-        <a href="#/login" class="loginButton flex-none">S'identifier</a>
+        {#if api.getCookie("authToken") !== null && api.getCookie("authToken") !== ""}
+            <AccountDropdown/>
+        {:else}
+            <a href="#/login" class="loginButton flex-none">S'identifier</a>
+        {/if}
     </nav>
 </header>
 
