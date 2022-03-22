@@ -37,6 +37,10 @@
           } else if (body.hasOwnProperty("authToken") && body.authToken !== "") {
             authSuccess = 'Successfully logged in!';
             document.cookie = `authToken=${body.authToken}; path=/; expires=${body.expires}`;
+            setTimeout(() => {
+                window.location.href = "#";
+                window.location.reload();
+            }, 2000);
           }
         } else if (response.status === 400) {
           errors.push('Bad Request');
