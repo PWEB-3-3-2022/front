@@ -46,3 +46,17 @@ export function getCookie(user) {
   }
   return null;
 }
+
+export async function getAccountInfos(payload) {
+  return fetch(
+    `${API_BASE}/user/infos`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+}
