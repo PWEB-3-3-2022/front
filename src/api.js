@@ -1,7 +1,11 @@
+import { writable } from 'svelte/store';
+
 // const API_BASE = 'https://tcflix.herokuapp.com';
 const API_BASE = process.env.NODE_ENV === 'production'
   ? 'https://tcflix.herokuapp.com'
   : 'http://127.0.0.1:3001';
+
+export const logged = writable(false);
 
 export async function searchMedias(query) {
   const response = await fetch(`${API_BASE}/medias/search?query=${query}`);
