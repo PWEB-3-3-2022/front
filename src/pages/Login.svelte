@@ -1,5 +1,12 @@
 <script>
   import * as api from '../api';
+  import { push } from 'svelte-spa-router';
+
+  if (api.checkLogin()) {
+    push('#/');
+  }
+
+  let rememberMe = false;
 
   let email = '';
   let errors = {};
@@ -24,17 +31,23 @@
 
     if (Object.keys(errors).length === 0) {
       isLoading = true;
-      api.login({ email, password }).then(async (response) => {
+      api.login({ email, password, rememberMe }).then(async (response) => {
         // Handle errors here
         if (response.ok) {
           const body = await response.json();
-          if (body.check === 'NOPE') {
+          if (body.hasOwnProperty("error") && body.error === "NoAccountError") {
             errors.push('Invalid credentials');
-          } else if (body.check === 'noice') {
+          } else if (body.hasOwnProperty("authToken") && body.authToken !== "") {
             authSuccess = 'Successfully logged in!';
+            document.cookie = `authToken=${body.authToken}; path=/; ${rememberMe ? `expires=${body.expires}` : ``}`;
+            setTimeout(() => {
+                push('#/');
+            }, 2000);
           }
         } else if (response.status === 400) {
           errors.push('Bad Request');
+        } else if (response.status === 500) {
+          errors.push('Internal Server Error: could not log in.');
         } else {
           errors.push(`Error code ${response.status}`);
         }
@@ -99,7 +112,7 @@
                 <div class="hybrid-login-form-help">
                     <div class="ui-binary-input login-remember-me">
                         <input type="checkbox" class="" name="rememberMe" id="bxid_rememberMe_true" value="true"
-                               tabindex="0" checked=""/>
+                               tabindex="0" bind:checked={rememberMe}/>
                         <label for="bxid_rememberMe_true"><span
                                 class="login-remember-me-label-text">Se souvenir de moi</span></label>
                         <div class="helper"></div>

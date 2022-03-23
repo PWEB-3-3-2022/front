@@ -35,17 +35,19 @@
           // Handle errors here
           if (response.ok) {
             const body = await response.json();
-            if (body.check === 'OK') {
+            if (body.hasOwnProperty("response") && body.response === 'OK') {
                 authSuccess = 'Account successfully created!';
-            } else if (body.check === 'already_exists') {
+            } else if (body.hasOwnProperty("error") && body.error === 'AccountAlreadyExistsError') {
                 errors.push("Un compte est déjà enregistré avec cette addresse mail !");
-            } else if (body.check === 'incorrect_email') {
+            } else if (body.hasOwnProperty("error") && body.error === 'IncorrectEmailError') {
                 errors.push('Email is not correct.')
             } else {
                 errors.push('A problem happened');
             }
           } else if (response.status === 400) {
             errors.push('Bad Request');
+          } else if (response.status === 500) {
+            errors.push('Internal Server Error: could not create a new account');
           } else {
             errors.push(`Error code ${response.status}`);
           }
