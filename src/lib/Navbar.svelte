@@ -5,6 +5,7 @@
   import AccountDropdown from './AccountDropdown.svelte';
   import * as api from '../api';
   import '../global.css';
+  import { logged } from '../api';
 
   export let sidebar = false;
 </script>
@@ -20,7 +21,7 @@
         <div class="basis-4/6 grow ml-60">
             <Searchbar/>
         </div>
-        {#if api.checkLogin()}
+        {#if api.checkLogin() && $logged}
             <AccountDropdown/>
         {:else}
             <a href="#/login" class="loginButton flex-none">S'identifier</a>

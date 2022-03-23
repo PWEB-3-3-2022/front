@@ -1,5 +1,7 @@
 <script>
     import { getAccountInfos, getCookie } from '../api.js';
+    import { logged } from '../api';
+    import { push } from 'svelte-spa-router';
     let userMail = '';
     let showDropdownMenu = false;
     getAccountInfos({ authToken: getCookie('authToken') }).then(async (response) => {
@@ -25,6 +27,6 @@
       </li>
     </ul>
     <div class="py-1">
-      <a href="#/" on:click={() => { document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; window.location.reload(); }} class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Se déconnecter</a>
+      <a href="#/" on:click={() => { document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; $logged = false; push('#/'); }} class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Se déconnecter</a>
     </div>
 </div>

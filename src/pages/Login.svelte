@@ -1,6 +1,7 @@
 <script>
   import * as api from '../api';
   import { push } from 'svelte-spa-router';
+  import { logged } from '../api';
 
   if (api.checkLogin()) {
     push('#/');
@@ -40,6 +41,7 @@
           } else if (body.hasOwnProperty("authToken") && body.authToken !== "") {
             authSuccess = 'Successfully logged in!';
             document.cookie = `authToken=${body.authToken}; path=/; ${rememberMe ? `expires=${body.expires}` : ``}`;
+            $logged = true;
             setTimeout(() => {
                 push('#/');
             }, 2000);
