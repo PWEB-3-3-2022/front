@@ -5,6 +5,8 @@
     window.location.href="#";
   }
 
+  let rememberMe = false;
+
   let email = '';
   let errors = {};
   let authSuccess = '';
@@ -28,7 +30,7 @@
 
     if (Object.keys(errors).length === 0) {
       isLoading = true;
-      api.login({ email, password }).then(async (response) => {
+      api.login({ email, password, rememberMe }).then(async (response) => {
         // Handle errors here
         if (response.ok) {
           const body = await response.json();
@@ -36,7 +38,7 @@
             errors.push('Invalid credentials');
           } else if (body.hasOwnProperty("authToken") && body.authToken !== "") {
             authSuccess = 'Successfully logged in!';
-            document.cookie = `authToken=${body.authToken}; path=/; expires=${body.expires}`;
+            document.cookie = `authToken=${body.authToken}; path=/; ${rememberMe ? `expires=${body.expires}` : ``}`;
             setTimeout(() => {
                 window.location.href = "#";
                 window.location.reload();
@@ -110,7 +112,7 @@
                 <div class="hybrid-login-form-help">
                     <div class="ui-binary-input login-remember-me">
                         <input type="checkbox" class="" name="rememberMe" id="bxid_rememberMe_true" value="true"
-                               tabindex="0" checked=""/>
+                               tabindex="0" bind:checked={rememberMe}/>
                         <label for="bxid_rememberMe_true"><span
                                 class="login-remember-me-label-text">Se souvenir de moi</span></label>
                         <div class="helper"></div>
