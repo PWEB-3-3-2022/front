@@ -7,6 +7,11 @@
     getAccountInfos({ authToken: getCookie('authToken') }).then(async (response) => {
         if (response.ok) {
             const body = await response.json();
+            if (body.hasOwnProperty("error")) {
+              document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+              window.location.reload();
+              return;
+            }
             userMail = body.email;
         }
     });
