@@ -1,8 +1,9 @@
 <script>
   import * as api from '../api';
+  import { push } from 'svelte-spa-router';
 
-  if (api.getCookie("authToken") !== null && api.getCookie("authToken") !== "") {
-    window.location.href="#";
+  if (api.checkLogin()) {
+    push('#/');
   }
 
   let rememberMe = false;
@@ -40,8 +41,7 @@
             authSuccess = 'Successfully logged in!';
             document.cookie = `authToken=${body.authToken}; path=/; ${rememberMe ? `expires=${body.expires}` : ``}`;
             setTimeout(() => {
-                window.location.href = "#";
-                window.location.reload();
+                push('#/');
             }, 2000);
           }
         } else if (response.status === 400) {

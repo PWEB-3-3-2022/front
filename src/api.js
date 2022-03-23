@@ -60,3 +60,7 @@ export async function getAccountInfos(payload) {
     },
   );
 }
+
+export function checkLogin() {
+  return (getCookie('authToken') !== null && getCookie('authToken') !== '');
+}
