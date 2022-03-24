@@ -1,5 +1,7 @@
 <script>
     import { getAccountInfos, getCookie } from '../api.js';
+    import { push } from 'svelte-spa-router';
+    import { logged } from '../api';
     let expanded = {}
     expanded.profile_0 = false;
     let email = '';
@@ -13,6 +15,7 @@
             const body = await response.json();
             if (body.hasOwnProperty("error")) {
               document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+              $logged = false;
               push('#/');
               return;
             }

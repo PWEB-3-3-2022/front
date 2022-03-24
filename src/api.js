@@ -5,7 +5,12 @@ const API_BASE = process.env.NODE_ENV === 'production'
   ? 'https://tcflix.herokuapp.com'
   : 'http://127.0.0.1:3001';
 
-export const logged = writable(false);
+
+export function checkLogin() {
+  return (getCookie('authToken') !== null && getCookie('authToken') !== '');
+}
+
+export const logged = writable(checkLogin());
 
 export async function searchMedias(query) {
   const response = await fetch(`${API_BASE}/medias/search?query=${query}`);
@@ -63,8 +68,4 @@ export async function getAccountInfos(payload) {
       body: JSON.stringify(payload),
     },
   );
-}
-
-export function checkLogin() {
-  return (getCookie('authToken') !== null && getCookie('authToken') !== '');
 }
