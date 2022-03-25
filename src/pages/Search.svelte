@@ -8,11 +8,28 @@
   // Parse query string parameters everytime they change
   const searchResults = derived(querystring, (querystring_, set) => {
     query = new URLSearchParams(querystring_).get('query');
-    searchMedias(query).then(set).catch((e) => console.log(`Failed to search for medias : ${e}`));
+    if (query !== '') {
+      searchMedias(query).then(set).catch((e) => console.log(`Failed to search for medias : ${e}`));
+    }
   });
 </script>
 
 <main>
-    <span>Results for "{query}"</span>
-    <Mosaic medias={$searchResults}/>
+    {#if query === ''}
+        <h1>Search for medias with the search bar ^</h1>
+    {:else}
+        <h1>Search results for "{query}"</h1>
+        <Mosaic medias={$searchResults}/>
+    {/if}
 </main>
+
+<style>
+    main {
+        margin: 10px;
+    }
+
+    h1 {
+        font-size: 30px;
+        margin-left: 1em;
+    }
+</style>

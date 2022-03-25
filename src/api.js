@@ -8,7 +8,29 @@ export async function searchMedias(query) {
   return response.json();
 }
 
-export async function login(payload) {
+export function homeMovies(count = 6) {
+  return fetch(
+    `${API_BASE}/home/movies?count=${count}`,
+    {
+      headers: {
+        Accept: 'application/json',
+      },
+    },
+  );
+}
+
+export function homeTvshows(count = 6) {
+  return fetch(
+    `${API_BASE}/home/tvshows?count=${count}`,
+    {
+      headers: {
+        Accept: 'application/json',
+      },
+    },
+  );
+}
+
+export function login(payload) {
   return fetch(
     `${API_BASE}/auth/login`,
     {
