@@ -1,16 +1,7 @@
-import { writable } from 'svelte/store';
-
 // const API_BASE = 'https://tcflix.herokuapp.com';
 const API_BASE = process.env.NODE_ENV === 'production'
   ? 'https://tcflix.herokuapp.com'
   : 'http://127.0.0.1:3001';
-
-
-export function checkLogin() {
-  return (getCookie('authToken') !== null && getCookie('authToken') !== '');
-}
-
-export const logged = writable(checkLogin());
 
 export async function searchMedias(query) {
   const response = await fetch(`${API_BASE}/medias/search?query=${query}`);
@@ -45,20 +36,9 @@ export async function register(payload) {
   );
 }
 
-export function getCookie(user) {
-  const cookieArr = document.cookie.split(';');
-  for (let i = 0; i < cookieArr.length; i += 1) {
-    const cookiePair = cookieArr[i].split('=');
-    if (user === cookiePair[0].trim()) {
-      return decodeURIComponent(cookiePair[1]);
-    }
-  }
-  return null;
-}
-
 export async function getAccountInfos(payload) {
   return fetch(
-    `${API_BASE}/user/infos`,
+    `${API_BASE}/me`,
     {
       method: 'POST',
       headers: {

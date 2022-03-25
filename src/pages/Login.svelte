@@ -1,9 +1,9 @@
 <script>
-  import * as api from '../api';
   import { push } from 'svelte-spa-router';
-  import { logged } from '../api';
+  import * as api from '../api';
+  import * as account from '../account';
 
-  if (api.checkLogin()) {
+  if (account.isLoggedIn()) {
     push('#/');
   }
 
@@ -36,15 +36,13 @@
         // Handle errors here
         if (response.ok) {
           const body = await response.json();
-          if (body.hasOwnProperty("error") && body.error === "NoAccountError") {
+          if ('error' in body && body.error === 'NoAccountError') {
             errors.push('Invalid credentials');
-          } else if (body.hasOwnProperty("authToken") && body.authToken !== "") {
+          } else if ('authToken' in body && body.authToken !== '') {
             authSuccess = 'Successfully logged in!';
-            document.cookie = `authToken=${body.authToken}; path=/; ${rememberMe ? `expires=${body.expires}` : ``}`;
-            $logged = true;
-            setTimeout(() => {
-                push('#/');
-            }, 2000);
+            document.cookie = `authToken=${body.authToken}; path=/; ${rememberMe ? `expires=${body.expires}` : ''}`;
+            await account.reloadAccount(body.authToken);
+            await push('#/');
           }
         } else if (response.status === 400) {
           errors.push('Bad Request');
@@ -154,36 +152,6 @@
         background: 0 0
     }
 
-    .nfPasswordInput .nfTextField::-webkit-credentials-auto-fill-button {
-        background-color: #8c8c8c;
-        margin-top: -11px
-    }
-
-    .nfPasswordInput .nfTextField::-webkit-caps-lock-indicator {
-        -webkit-mask-image: url("data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"17\" height=\"17\"><path fill=\"black\" d=\"M12.5 0.5A 4 4 0 0 1 16.5 4.5L 16.5 12.5A 4 4 0 0 1 12.5 16.5L 4.5 16.5A 4 4 0 0 1 0.5 12.5L 0.5 4.5A 4 4 0 0 1 4.5 0.5L 12.5 0.5M 8.5 2L 4 7L 6.25 7L 6.25 10.25L 10.75 10.25L 10.75 7L 13 7L 8.5 2M 10.75 12L 6.25 12L 6.25 14.25L 10.75 14.25L 10.75 12\"/></svg>");
-        mask-image: url("data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"17\" height=\"17\"><path fill=\"black\" d=\"M12.5 0.5A 4 4 0 0 1 16.5 4.5L 16.5 12.5A 4 4 0 0 1 12.5 16.5L 4.5 16.5A 4 4 0 0 1 0.5 12.5L 0.5 4.5A 4 4 0 0 1 4.5 0.5L 12.5 0.5M 8.5 2L 4 7L 6.25 7L 6.25 10.25L 10.75 10.25L 10.75 7L 13 7L 8.5 2M 10.75 12L 6.25 12L 6.25 14.25L 10.75 14.25L 10.75 12\"/></svg>");
-        -webkit-mask-size: 14px 14px;
-        mask-size: 14px 14px;
-        -webkit-user-select: none;
-        user-select: none;
-        -webkit-appearance: none;
-        appearance: none;
-        background-color: #8c8c8c;
-        content: '';
-        height: 14px;
-        margin: 6px 2px 0 3px;
-        width: 14px
-    }
-
-    .nfPasswordInput .nfTextField::-ms-clear,
-    .nfPasswordInput .nfTextField::-ms-reveal {
-        background: 0 0;
-        color: #8c8c8c;
-        height: 24px;
-        margin-top: -10px;
-        width: 24px
-    }
-
     .nfPasswordControls {
         display: flex;
         background: #fff
@@ -279,12 +247,6 @@
 
     button[disabled] {
         cursor: default
-    }
-
-    button::-moz-focus-inner,
-    input::-moz-focus-inner {
-        border: 0;
-        padding: 0
     }
 
     input {
@@ -526,19 +488,6 @@
         position: relative
     }
 
-    .nfEmailPhoneControls .nfTextField::-webkit-credentials-auto-fill-button {
-        background-color: #8c8c8c;
-        margin-top: -11px
-    }
-
-    .nfEmailPhoneControls .nfTextField::-ms-clear {
-        background: 0 0;
-        color: #8c8c8c;
-        height: 24px;
-        margin-top: -10px;
-        width: 24px
-    }
-
     .nfPasswordInput {
         position: relative;
         z-index: 0
@@ -546,36 +495,6 @@
 
     .nfPasswordInput .nfTextField {
         background: 0 0
-    }
-
-    .nfPasswordInput .nfTextField::-webkit-credentials-auto-fill-button {
-        background-color: #8c8c8c;
-        margin-top: -11px
-    }
-
-    .nfPasswordInput .nfTextField::-webkit-caps-lock-indicator {
-        -webkit-mask-image: url("data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"17\" height=\"17\"><path fill=\"black\" d=\"M12.5 0.5A 4 4 0 0 1 16.5 4.5L 16.5 12.5A 4 4 0 0 1 12.5 16.5L 4.5 16.5A 4 4 0 0 1 0.5 12.5L 0.5 4.5A 4 4 0 0 1 4.5 0.5L 12.5 0.5M 8.5 2L 4 7L 6.25 7L 6.25 10.25L 10.75 10.25L 10.75 7L 13 7L 8.5 2M 10.75 12L 6.25 12L 6.25 14.25L 10.75 14.25L 10.75 12\"/></svg>");
-        mask-image: url("data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"17\" height=\"17\"><path fill=\"black\" d=\"M12.5 0.5A 4 4 0 0 1 16.5 4.5L 16.5 12.5A 4 4 0 0 1 12.5 16.5L 4.5 16.5A 4 4 0 0 1 0.5 12.5L 0.5 4.5A 4 4 0 0 1 4.5 0.5L 12.5 0.5M 8.5 2L 4 7L 6.25 7L 6.25 10.25L 10.75 10.25L 10.75 7L 13 7L 8.5 2M 10.75 12L 6.25 12L 6.25 14.25L 10.75 14.25L 10.75 12\"/></svg>");
-        -webkit-mask-size: 14px 14px;
-        mask-size: 14px 14px;
-        -webkit-user-select: none;
-        user-select: none;
-        -webkit-appearance: none;
-        appearance: none;
-        background-color: #8c8c8c;
-        content: '';
-        height: 14px;
-        margin: 6px 2px 0 3px;
-        width: 14px
-    }
-
-    .nfPasswordInput .nfTextField::-ms-clear,
-    .nfPasswordInput .nfTextField::-ms-reveal {
-        background: 0 0;
-        color: #8c8c8c;
-        height: 24px;
-        margin-top: -10px;
-        width: 24px
     }
 
     .nfPasswordControls {
@@ -859,11 +778,6 @@
         background: #454545
     }
 
-    .hybrid-login-form .nfEmailPhoneControls .nfTextField::-webkit-credentials-auto-fill-button {
-        background-color: #8c8c8c;
-        margin-top: -14px
-    }
-
     .hybrid-login-form .nfEmailPhoneControls .nfTextField::-ms-clear {
         color: #8c8c8c;
         margin-top: -15px
@@ -881,16 +795,6 @@
 
     .hybrid-login-form .nfPasswordControls .nfTextField {
         height: 50px
-    }
-
-    .hybrid-login-form .nfPasswordControls .nfTextField::-webkit-credentials-auto-fill-button {
-        background-color: #8c8c8c;
-        margin-top: -14px
-    }
-
-    .hybrid-login-form .nfPasswordControls .nfTextField::-webkit-caps-lock-indicator {
-        background-color: #8c8c8c;
-        margin-top: 3px
     }
 
     .hybrid-login-form .nfPasswordControls .nfTextField::-ms-clear,

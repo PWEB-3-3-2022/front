@@ -5,7 +5,7 @@
   import About from './pages/About.svelte';
   import Login from './pages/Login.svelte';
   import Register from './pages/Register.svelte';
-  import YourAccount from './pages/YourAccount.svelte';
+  import Account from './pages/Account.svelte';
 
   import Navbar from './lib/Navbar.svelte';
   import Sidebar from './lib/Sidebar.svelte';
@@ -20,7 +20,7 @@
     '/about': About,
     '/login': Login,
     '/register': Register,
-    '/YourAccount': YourAccount,
+    '/account': Account,
   };
 
   // Triggered when changing page

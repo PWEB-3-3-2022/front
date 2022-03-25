@@ -3,9 +3,7 @@
   import Hamburger from './Hamburger.svelte';
   import Searchbar from './Searchbar.svelte';
   import AccountDropdown from './AccountDropdown.svelte';
-  import * as api from '../api';
-  import '../global.css';
-  import { logged } from '../api';
+  import * as account from '../account.js';
 
   export let sidebar = false;
 </script>
@@ -21,7 +19,7 @@
         <div class="basis-4/6 grow ml-60">
             <Searchbar/>
         </div>
-        {#if api.checkLogin() && $logged}
+        {#if account.isLoggedIn()}
             <AccountDropdown/>
         {:else}
             <a href="#/login" class="loginButton flex-none">S'identifier</a>
