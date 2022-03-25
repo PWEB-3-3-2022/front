@@ -3,11 +3,15 @@
   import { logged } from '../account';
 
   let showDropdownMenu = false;
+  let loggedValue;
+  logged.subscribe(value => {
+      loggedValue = value;
+  })
 </script>
 
 
 <button id="dropdownDividerButton" on:focus={() => { showDropdownMenu = true; }}
-        on:blur={() => { showDropdownMenu = false; }} on:click={() => { showDropdownMenu = !showDropdownMenu; }}
+        on:blur={() => { setTimeout(() => { showDropdownMenu = false; }, 100); }} on:click={() => { showDropdownMenu = !showDropdownMenu; }}
         data-dropdown-toggle="dropdownDivider"
         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         type="button">
@@ -25,18 +29,18 @@
      class="z-10 w-44 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
     <div class="py-3 px-4 text-sm text-gray-900 dark:text-white">
         <div>Connecté en tant que</div>
-        <div class="font-semibold">{$logged}</div>
+        <div class="font-semibold">{loggedValue.email}</div>
     </div>
     <ul class="py-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDividerButton">
         <li>
-            <a href="#/YourAccount"
+            <a href="#/Account"
                class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Paramètres du
                 compte</a>
         </li>
     </ul>
     <div class="py-1">
         <a href="#/"
-           on:click={() => { document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'; $logged = false; push('#/'); }}
+           on:click={() => { document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'; logged.set(null); push('#/'); }}
            class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Se
             déconnecter</a>
     </div>
