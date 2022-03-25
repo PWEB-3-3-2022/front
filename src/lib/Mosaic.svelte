@@ -7,8 +7,6 @@
 <div class="mosaic">
     {#each medias as media}
         <MosaicTile {media}/>
-    {:else}
-        <p>Loading ...</p>
     {/each}
 </div>
 

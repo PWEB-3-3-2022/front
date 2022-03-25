@@ -47,7 +47,7 @@
                     <div class="account-section collapsable-panel clearfix membership-section-wrapper"
                          data-uia="membership-section">
                         <header class="account-section-header collapsable-section-toggle">
-                            <h2 class="account-section-heading">Abonnement et facturation</h2>
+                            <h2 class="account-section-heading">Informations</h2>
                         </header>
                         <section class="collapsable-section-content account-section-content">
                             <div class="account-subsection clearfix">
@@ -65,15 +65,15 @@
                                     <div class="account-section-group">
                                         <div class="account-section-item"><a data-uia="account-email-link"
                                                                              class="account-section-link"
-                                                                             href="/email">Modifier l&#x27;adresse
+                                                                             href="#/">Modifier l&#x27;adresse
                                             e-mail du compte</a></div>
                                         <div class="account-section-item"><a data-uia="account-password-link"
                                                                              class="account-section-link"
-                                                                             href="/password">Modifier le mot de
+                                                                             href="#/">Modifier le mot de
                                             passe</a></div>
                                         <div class="account-section-item"><a data-uia="account-phone-link"
                                                                              class="account-section-link"
-                                                                             href="/phonenumber">Ajouter un
+                                                                             href="#/">Ajouter un
                                             numéro de téléphone</a></div>
                                     </div>
                                 </div>
@@ -82,7 +82,7 @@
                     </div>
                     <div class="account-section collapsable-panel clearfix" data-uia="profile-section">
                         <header class="account-section-header collapsable-section-toggle">
-                            <h2 class="account-section-heading">Profils et contrôle parental</h2>
+                            <h2 class="account-section-heading">Profils</h2>
                         </header>
                         <section class="collapsable-section-content account-section-content">
                             <div class="account-subsection clearfix">
@@ -201,109 +201,6 @@
                                                 </li>
                                             </ul>
                                         </li>
-                                        <li class="single-profile" data-uia="single-profile-1" id="profile_1">
-                                            <div aria-expanded="false" class="profile-header">
-                                                <img class="activeProfile"
-                                                     src="https://occ-0-784-778.1.nflxso.net/dnm/api/v6/K6hjPJd6cR6FpVELC5Pd6ovHRSk/AAAABQ_5NlU6oiEjm2-0Nq0k3GkoO5x3lSaB4zMq2ggg-NHsLQa5QTAGV3J_Gn2C27_1zzCXwkBxggt4Syl00Z2NqFsQnQ.png?r=fcd"
-                                                     alt="Jeunesse"/>
-                                                <div class="profile-summary">
-                                                    <h3>Jeunesse</h3>
-                                                    <div><span class="maturity-label first">7+</span> et moins
-                                                    </div>
-                                                </div>
-                                                <button class="profile-action-icons"
-                                                        aria-label="Étendre ce profil"
-                                                        aria-controls="profile_1">
-                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                         xmlns="http://www.w3.org/2000/svg"
-                                                         class="svg-icon svg-icon-chevron-down">
-                                                        <path fill-rule="evenodd" clip-rule="evenodd"
-                                                              d="M19.293 7.29297L12.0001 14.5859L4.70718 7.29297L3.29297 8.70718L11.293 16.7072C11.4805 16.8947 11.7349 17.0001 12.0001 17.0001C12.2653 17.0001 12.5196 16.8947 12.7072 16.7072L20.7072 8.70718L19.293 7.29297Z"
-                                                              fill="currentColor"></path>
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                            <ul class="profile-links">
-                                                <li class="account-section-item">
-                                                    <a class="profile-link"
-                                                       href="/settings/language/SLD6YL6NQNAEZIHEWDGQDOWXK4"
-                                                       data-uia="action-language-preferences">
-                                                        <div class="profile-main">
-                                                            <h4>Langue</h4>
-                                                            français
-                                                        </div>
-                                                        <div class="profile-change">Modifier</div>
-                                                    </a>
-                                                </li>
-                                                <li class="account-section-item">
-                                                    <a class="profile-link"
-                                                       href="/settings/restrictions/SLD6YL6NQNAEZIHEWDGQDOWXK4"
-                                                       data-uia="action-content-restrictions">
-                                                        <div class="profile-main">
-                                                            <h4>Restrictions d&#x27;accès</h4>
-                                                            <div><span class="maturity-label first">7+</span> et
-                                                                moins.
-                                                            </div>
-                                                        </div>
-                                                        <div class="profile-change">Modifier</div>
-                                                    </a>
-                                                </li>
-                                                <li class="account-section-item">
-                                                    <a class="profile-link"
-                                                       href="/settings/lock/SLD6YL6NQNAEZIHEWDGQDOWXK4"
-                                                       data-uia="action-profile-lock">
-                                                        <div class="profile-main">
-                                                            <h4>Verrouillage des profils</h4>
-                                                            Désactivé
-                                                        </div>
-                                                        <div class="profile-change">Modifier</div>
-                                                    </a>
-                                                </li>
-                                                <li class="account-section-item">
-                                                    <a class="profile-link"
-                                                       href="/settings/viewed/SLD6YL6NQNAEZIHEWDGQDOWXK4"
-                                                       data-uia="action-viewing-activity">
-                                                        <div class="profile-main">
-                                                            <h4>Historique</h4>
-                                                        </div>
-                                                        <div class="profile-change">Afficher</div>
-                                                    </a>
-                                                </li>
-                                                <li class="account-section-item">
-                                                    <a class="profile-link"
-                                                       href="/settings/rated/SLD6YL6NQNAEZIHEWDGQDOWXK4"
-                                                       data-uia="action-rating-activity">
-                                                        <div class="profile-main">
-                                                            <h4>Évaluations</h4>
-                                                        </div>
-                                                        <div class="profile-change">Afficher</div>
-                                                    </a>
-                                                </li>
-                                                <li class="account-section-item">
-                                                    <a class="profile-link"
-                                                       href="/settings/subtitles/SLD6YL6NQNAEZIHEWDGQDOWXK4"
-                                                       data-uia="action-subtitle-preferences">
-                                                        <div class="profile-main">
-                                                            <h4>Affichage des sous-titres</h4>
-                                                        </div>
-                                                        <div class="profile-change">Modifier</div>
-                                                    </a>
-                                                </li>
-                                                <li class="account-section-item">
-                                                    <a class="profile-link"
-                                                       href="/settings/playback/SLD6YL6NQNAEZIHEWDGQDOWXK4"
-                                                       data-uia="action-video-quality">
-                                                        <div class="profile-main">
-                                                            <h4>Paramètres de lecture</h4>
-                                                            Lecture automatique de l&#x27;épisode suivant.
-                                                            Lecture automatique des aperçus. Qualité audio et
-                                                            vidéo par défaut.
-                                                        </div>
-                                                        <div class="profile-change">Modifier</div>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -341,8 +238,7 @@
 </div>
 
 <style>
-    header,
-    section {
+    header, section {
         display: block
     }
 
@@ -350,13 +246,8 @@
         background-color: transparent
     }
 
-    a:active,
-    a:hover {
+    a:active, a:hover {
         outline: 0
-    }
-
-    b {
-        font-weight: 700
     }
 
     h1 {
@@ -399,17 +290,17 @@
     @font-face {
         font-family: nf-icon;
         src: url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.eot);
-        src: url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.eot?#iefix) format('embedded-opentype'),
-        url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.woff) format('woff'),
-        url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.ttf) format('truetype'),
-        url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.svg#nf-icon-v1-93) format('svg');
+        src: url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.eot?#iefix) format("embedded-opentype"),
+        url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.woff) format("woff"),
+        url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.ttf) format("truetype"),
+        url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.svg#nf-icon-v1-93) format("svg");
         font-weight: 400;
         font-style: normal
     }
 
     h1 {
         font-size: 1.5em;
-        color: #333;
+        color: var(--text-color-primary);
         margin: 0 0 .4em;
         font-weight: 400
     }
@@ -429,7 +320,7 @@
     }
 
     .clearfix:after {
-        content: ' ';
+        content: " ";
         display: block;
         width: 0;
         height: 0;
@@ -439,7 +330,7 @@
 
     a {
         text-decoration: none;
-        color: #0080ff
+        color: var(--link-color-primary)
     }
 
     a:hover {
@@ -468,17 +359,7 @@
     #hd .subnav-wrap ul li {
         line-height: 1;
         text-align: left;
-        margin-bottom: 0
-    }
-
-    .aro-genre-list > ul > li a {
-        color: #ccc;
-        cursor: pointer
-    }
-
-    .aro-genre-list > ul > li a:hover {
-        text-decoration: none;
-        color: #fff
+        margin-bottom: 0;
     }
 
     .responsive-account-container {
@@ -507,7 +388,7 @@
 
     .account-section-membersince {
         align-items: center;
-        color: #555;
+        color: var(--text-color-secondary);
         display: inline-flex;
         font-size: .8rem;
         font-weight: 800;
@@ -581,50 +462,17 @@
     }
 
     .account-section-item {
-        margin-bottom: 15px
+        margin-bottom: 15px;
     }
 
     @media only screen and (min-width: 740px) {
         .account-section-item {
-            margin-bottom: 10px
+            margin-bottom: 10px;
         }
     }
 
     .account-section-item-disabled {
-        color: #757575
-    }
-
-    .account-section-link {
-        color: #333;
-        display: block;
-        width: 100%;
-        padding: 15px 0 5px;
-        border-top: 1px solid #ccc
-    }
-
-    @media only screen and (min-width: 500px) {
-        .account-section-link {
-            color: #0073e6;
-            display: inline;
-            padding-right: 0;
-            border-top: none;
-            padding-top: 5px
-        }
-    }
-
-    .account-section-link:after {
-        font-family: nf-icon;
-        content: '\e867';
-        position: absolute;
-        right: 10px;
-        color: #999
-    }
-
-    @media only screen and (min-width: 500px) {
-        .account-section-link:after {
-            content: '';
-            display: none
-        }
+        color: var(--text-color-disabled);
     }
 
     .account-section-heading {
@@ -745,7 +593,7 @@
         align-self: center;
         padding-left: 20px;
         font-size: .8em;
-        color: #787878;
+        color: var(--text-color-primary);
         flex-grow: 1
     }
 
@@ -767,7 +615,7 @@
     }
 
     .profile-hub .profile-action-icons svg {
-        color: #aaa
+        color: var(--text-color-primary);
     }
 
     .profile-hub .profile-links {
@@ -788,13 +636,13 @@
         margin: 0 0 .3em 0;
         font-weight: 700;
         font-size: 1.2em;
-        color: #333
+        color: var(--text-color-primary);
     }
 
     .profile-hub h4 {
         margin: 4px 0;
         font-size: 1.2em;
-        color: #333
+        color: var(--text-color-primary);
     }
 
     .profile-hub .profile-link {
@@ -819,7 +667,7 @@
 
     .profile-hub .profile-main {
         flex-grow: 1;
-        color: #787878;
+        color: var(--text-color-primary);
         font-size: .8em;
         align-self: center
     }

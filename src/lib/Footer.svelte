@@ -34,7 +34,7 @@
     .footer {
         width: 100%;
         height: 220px;
-        background-color: #070617;
+        background-color: #000000;
     }
 
     .footer .col {

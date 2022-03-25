@@ -7,8 +7,8 @@
 
   export let sidebar = false;
   let loggedValue;
-  account.logged.subscribe(value => {
-      loggedValue = value;
+  account.logged.subscribe((value) => {
+    loggedValue = value;
   });
 </script>
 

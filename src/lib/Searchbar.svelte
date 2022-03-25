@@ -3,8 +3,7 @@
 
   let query = '';
 
-  function onSearch(e) {
-    e.preventDefault();
+  function onSearch() {
     push(`/search?query=${query}`);
   }
 
@@ -13,7 +12,7 @@
   }
 </script>
 
-<form on:submit={onSearch}>
+<form on:submit|preventDefault={onSearch}>
     <input type="text" id="search-input" bind:value={query} on:keyup={onKeyUp} name="query" placeholder="Search...">
 </form>
 
