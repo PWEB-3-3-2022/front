@@ -597,15 +597,6 @@
         flex-grow: 1
     }
 
-    .profile-hub .maturity-label {
-        margin-left: 5px;
-        unicode-bidi: normal
-    }
-
-    .profile-hub .maturity-label.first {
-        margin-left: 0
-    }
-
     .profile-hub .profile-action-icons {
         align-self: center;
         display: flex;

@@ -1,12 +1,12 @@
 <script>
-  import MosaicTile from './MosaicTile.svelte';
   import { getContext } from 'svelte';
+  import MosaicTile from './MosaicTile.svelte';
   import Popup from './Popup.svelte';
 
   export let medias = [];
 
-  const {open} = getContext('simple-modal');
-  const showSurprise = () => open(Popup, {message: 'SUUUUUUUUUUUUU'});
+  const { open } = getContext('simple-modal');
+  const showSurprise = () => open(Popup, { message: 'SUUUUUUUUUUUUU' });
 </script>
 
 <div class="mosaic">

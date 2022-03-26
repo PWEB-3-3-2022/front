@@ -4,7 +4,6 @@
 
 <img alt="thumbnail" class="mosaic-tile" src={media.poster} on:click>
 
-
 <style>
     .mosaic-tile {
         margin: 1em;
