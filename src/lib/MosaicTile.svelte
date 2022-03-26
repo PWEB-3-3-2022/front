@@ -2,7 +2,7 @@
   export let media;
 </script>
 
-<img alt="thumbnail" class="mosaic-tile" src={media.poster}>
+<img alt="thumbnail" class="mosaic-tile" src={media.poster} on:click>
 
 
 <style>
