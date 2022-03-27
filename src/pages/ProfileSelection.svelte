@@ -1,5 +1,4 @@
 <script>
-  import SimplePage from './SimplePage.svelte';
 
   const profiles = [
     {
@@ -9,24 +8,22 @@
     { name: 'Profile1', picture: 'https://images.hdqwalls.com/download/scorpion-in-mortal-kombat-2048x2048.jpg' }];
 </script>
 
-<SimplePage>
-    <div class="page-container">
-        <div class="main-centered">
-            <h1 class="profile-header">Choose your fighter</h1>
-            <ul class="profile-list">
-                {#each profiles as profile}
-                    <li class="profile">
-                        <a class="profile-link" href="#/profile">
-                            <img alt="profile icon" class="profile-icon"
-                                 src={profile.picture}/>
-                            <span class="profile-name">{profile.name}</span>
-                        </a>
-                    </li>
-                {/each}
-            </ul>
-        </div>
+<div class="page-container">
+    <div class="main-centered">
+        <h1 class="profile-header">Choose your fighter</h1>
+        <ul class="profile-list">
+            {#each profiles as profile}
+                <li class="profile">
+                    <a class="profile-link" href="#/profile">
+                        <img alt="profile icon" class="profile-icon"
+                             src={profile.picture}/>
+                        <span class="profile-name">{profile.name}</span>
+                    </a>
+                </li>
+            {/each}
+        </ul>
     </div>
-</SimplePage>
+</div>
 
 <style>
     .page-container {

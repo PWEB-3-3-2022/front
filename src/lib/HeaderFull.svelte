@@ -1,11 +1,9 @@
 <script>
   import Logo from './Logo.svelte';
-  import Hamburger from './Hamburger.svelte';
   import Searchbar from './Searchbar.svelte';
   import AccountDropdown from './AccountDropdown.svelte';
   import * as account from '../account.js';
 
-  export let sidebar = false;
   let loggedValue;
   account.logged.subscribe((value) => {
     loggedValue = value;
@@ -14,9 +12,6 @@
 
 <header class="bg-black p-2 text-xl text-red-600">
     <nav class="flex flex-flow flex-nowrap justify-between items-center gap-1">
-        <div class="flex-none">
-            <Hamburger bind:open={sidebar}/>
-        </div>
         <div class="flex-none">
             <Logo/>
         </div>
