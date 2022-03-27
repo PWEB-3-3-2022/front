@@ -39,8 +39,6 @@
 
     .footer .col {
         float: left;
-        -moz-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
         box-sizing: border-box;
         width: 190px;
         height: auto;
@@ -71,8 +69,6 @@
         font-weight: bold;
         padding: 5px 0 5px 0;
         cursor: pointer;
-        -moz-transition: .2s;
-        -webkit-transition: .2s;
         transition: .2s;
         color: #999999;
     }
@@ -83,8 +79,6 @@
     }
 
     .footer .col ul li:hover {
-        -moz-transition: .1s;
-        -webkit-transition: .1s;
         transition: .1s;
         color: #ffffff;
     }

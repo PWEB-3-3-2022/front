@@ -3,6 +3,7 @@
   import { derived } from 'svelte/store';
   import Mosaic from '../lib/Mosaic.svelte';
   import { searchMedias } from '../api';
+  import FullPage from './FullPage.svelte';
 
   let query = new URLSearchParams($querystring).get('query');
   // Parse query string parameters everytime they change
@@ -14,17 +15,19 @@
   });
 </script>
 
-<main>
-    {#if query === ''}
-        <h1>Search for medias with the search bar ^</h1>
-    {:else}
-        <h1>Search results for "{query}"</h1>
-        <Mosaic medias={$searchResults}/>
-    {/if}
-</main>
+<FullPage>
+    <div id="main">
+        {#if query === ''}
+            <h1>Search for medias with the search bar ^</h1>
+        {:else}
+            <h1>Search results for "{query}"</h1>
+            <Mosaic medias={$searchResults}/>
+        {/if}
+    </div>
+</FullPage>
 
 <style>
-    main {
+    #main {
         margin: 10px;
     }
 
