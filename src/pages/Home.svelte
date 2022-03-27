@@ -1,5 +1,4 @@
 <script>
-  import Modal from 'svelte-simple-modal';
   import Mosaic from '../lib/Mosaic.svelte';
   import { homeMovies, homeTvshows } from '../api.js';
 
@@ -8,40 +7,38 @@
 </script>
 
 <main>
-    <Modal>
-        <section>
-            <h1 class="section-header">Movies</h1>
-            {#await movies}
-                <p>Loading ...</p>
+    <section>
+        <h1 class="section-header">Movies</h1>
+        {#await movies}
+            <p>Loading ...</p>
+        {:then movies}
+            {#await movies.json()}
+                <p>Loading</p>
             {:then movies}
-                {#await movies.json()}
-                    <p>Loading</p>
-                {:then movies}
-                    <Mosaic medias={movies}/>
-                {:catch err}
-                    <p>Error : {err}</p>
-                {/await}
+                <Mosaic medias={movies}/>
             {:catch err}
                 <p>Error : {err}</p>
             {/await}
-        </section>
-        <section>
-            <h1 class="section-header">TV Shows</h1>
-            {#await tvshows}
-                <p>Loading ...</p>
+        {:catch err}
+            <p>Error : {err}</p>
+        {/await}
+    </section>
+    <section>
+        <h1 class="section-header">TV Shows</h1>
+        {#await tvshows}
+            <p>Loading ...</p>
+        {:then tvshows}
+            {#await tvshows.json()}
+                <p>Loading</p>
             {:then tvshows}
-                {#await tvshows.json()}
-                    <p>Loading</p>
-                {:then tvshows}
-                    <Mosaic medias={tvshows}/>
-                {:catch err}
-                    <p>Error : {err}</p>
-                {/await}
+                <Mosaic medias={tvshows}/>
             {:catch err}
                 <p>Error : {err}</p>
             {/await}
-        </section>
-    </Modal>
+        {:catch err}
+            <p>Error : {err}</p>
+        {/await}
+    </section>
 </main>
 
 <style>

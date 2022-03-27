@@ -1,12 +1,14 @@
 <script>
   import Router from 'svelte-spa-router';
+  import { Modal } from 'svelte-simple-modal';
   import Home from './pages/Home.svelte';
   import Search from './pages/Search.svelte';
   import About from './pages/About.svelte';
   import Login from './pages/Login.svelte';
   import Register from './pages/Register.svelte';
   import Account from './pages/Account.svelte';
-
+  import ChooseProfile from './pages/ProfileSelection.svelte';
+  
   import Navbar from './lib/Navbar.svelte';
   import Sidebar from './lib/Sidebar.svelte';
   import Footer from './lib/Footer.svelte';
@@ -21,6 +23,7 @@
     '/login': Login,
     '/register': Register,
     '/account': Account,
+    '/profile': ChooseProfile,
   };
 
   // Triggered when changing page
@@ -34,7 +37,9 @@
 <Navbar bind:sidebar={open}/>
 
 <div id="main">
-    <Router {routes} on:routeLoaded={routeLoaded}/>
+    <Modal>
+        <Router on:routeLoaded={routeLoaded} {routes}/>
+    </Modal>
 </div>
 
 <Footer/>

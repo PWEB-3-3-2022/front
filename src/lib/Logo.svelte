@@ -3,5 +3,5 @@
 </script>
 
 <a href="#/">
-    <img src={logo} alt="logo" width="119" height="45">
+    <img alt="logo" height="45" src={logo} width="119">
 </a>
