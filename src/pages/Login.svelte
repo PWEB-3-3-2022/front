@@ -73,27 +73,30 @@
                 <div class="nfInput nfEmailPhoneInput login-input login-input-email">
                     <div class="nfInputPlacement">
                         <div class="nfEmailPhoneControls">
-                            <input type="text" name="userLoginId" class="nfTextField" id="id_userLoginId"
-                                   tabindex="0" autocomplete="email" bind:value={email}/>
-                            <label for="id_userLoginId" class="placeLabel">E-mail</label>
+                            <input autocomplete="email" bind:value={email} class="nfTextField" id="id_userLoginId"
+                                   name="userLoginId" tabindex="0" type="text"/>
+                            <label class="placeLabel" for="id_userLoginId">E-mail</label>
                         </div>
                     </div>
                 </div>
-                <div id="pasw_control" class="nfInput nfPasswordInput login-input login-input-password"
-                     class:nfPasswordHasToggle={showPasswordToggle}>
+                <div class="nfInput nfPasswordInput login-input login-input-password"
+                     class:nfPasswordHasToggle={showPasswordToggle}
+                     id="pasw_control">
                     <div class="nfInputPlacement">
                         <div class="nfPasswordControls">
-                            <input bind:this={passwordInput} type={showPassword ? 'text' : 'password'}
-                                   name="password"
-                                   class="nfTextField" id="passwordInput"
-                                   tabindex="0" autocomplete="password"
+                            <input autocomplete="password" bind:this={passwordInput}
+                                   class="nfTextField"
+                                   id="passwordInput" name="password"
+                                   on:blur={() => { showPasswordToggle = false; }}
                                    on:focus={() => { showPasswordToggle = true; }}
-                                   on:blur={() => { showPasswordToggle = false; }}/>
-                            <label for="passwordInput" class="placeLabel">Mot de passe</label>
-                            <button id="id_password_toggle" type="button" class="nfPasswordToggle"
+                                   tabindex="0"
+                                   type={showPassword ? 'text' : 'password'}/>
+                            <label class="placeLabel" for="passwordInput">Mot de passe</label>
+                            <button class="nfPasswordToggle" id="id_password_toggle"
+                                    on:click={() => { showPassword = !showPassword; }}
                                     style:display={showPasswordToggle ? 'block' : 'none'}
                                     title="Afficher le mot de passe"
-                                    on:click={() => { showPassword = !showPassword; }}>{showPassword
+                                    type="button">{showPassword
                                 ? 'MASQUER'
                                 : 'AFFICHER'}
                             </button>
@@ -111,8 +114,9 @@
                 {/if}
                 <div class="hybrid-login-form-help">
                     <div class="ui-binary-input login-remember-me">
-                        <input type="checkbox" class="" name="rememberMe" id="bxid_rememberMe_true" value="true"
-                               tabindex="0" bind:checked={rememberMe}/>
+                        <input bind:checked={rememberMe} class="" id="bxid_rememberMe_true" name="rememberMe"
+                               tabindex="0"
+                               type="checkbox" value="true"/>
                         <label for="bxid_rememberMe_true"><span
                                 class="login-remember-me-label-text">Se souvenir de moi</span></label>
                         <div class="helper"></div>
@@ -136,7 +140,7 @@
         </div>
         <div class="hybrid-login-form-other">
             <div class="login-signup-now">Première visite sur TCflix ?
-                <a class=" " target="_self" href="#/register">Inscrivez-vous</a>
+                <a class=" " href="#/register" target="_self">Inscrivez-vous</a>
             </div>
         </div>
     </div>
@@ -145,168 +149,168 @@
 <style>
     .nfPasswordInput {
         position: relative;
-        z-index: 0
+        z-index: 0;
     }
 
     .nfPasswordInput .nfTextField {
-        background: 0 0
+        background: 0 0;
     }
 
     .nfPasswordControls {
         display: flex;
-        background: #fff
+        background: #fff;
     }
 
     .nfPasswordControls > label {
-        flex-grow: 1
+        flex-grow: 1;
     }
 
     .nfPasswordHasToggle .nfPasswordControls .nfPasswordToggle,
     .nfPasswordHasToggle .nfPasswordControls .nfTextField {
+        height: 46px;
         border: 0;
         border-radius: 0;
-        height: 46px
     }
 
     .nfPasswordToggle {
-        appearance: none;
-        color: #8c8c8c;
         font-size: 14px;
+        flex-grow: 0;
+        flex-shrink: 0;
+        color: #8c8c8c;
         border: 0;
         background: 0 0;
-        flex-grow: 0;
-        flex-shrink: 0
+        appearance: none;
     }
 
     h1 {
         font-size: 1.5em;
-        color: #333;
+        font-weight: 400;
         margin: 0 0 .4em;
-        font-weight: 400
+        color: #333;
     }
 
     @media screen and (min-width: 740px) {
         h1 {
             font-size: 2.15em;
-            margin: 0 0 .55em
+            margin: 0 0 .55em;
         }
     }
 
     a {
         text-decoration: none;
-        color: #0080ff
+        color: #0080ff;
     }
 
     a:hover {
-        text-decoration: underline
+        text-decoration: underline;
     }
 
     ul {
-        padding: 0
+        padding: 0;
     }
 
     ul > li {
-        margin-left: 1.1em;
         margin-bottom: 5px;
-        list-style-type: disc
+        margin-left: 1.1em;
+        list-style-type: disc;
     }
 
     a {
-        background-color: transparent
+        background-color: transparent;
     }
 
     a:active,
     a:hover {
-        outline: 0
+        outline: 0;
     }
 
     h1 {
         font-size: 2em;
-        margin: .67em 0
+        margin: .67em 0;
     }
 
     button,
     input {
-        color: inherit;
         font: inherit;
-        margin: 0
+        margin: 0;
+        color: inherit;
     }
 
     button {
-        overflow: visible
+        overflow: visible;
     }
 
     button {
-        text-transform: none
+        text-transform: none;
     }
 
     button {
+        cursor: pointer;
         -webkit-appearance: button;
-        cursor: pointer
     }
 
     button[disabled] {
-        cursor: default
+        cursor: default;
     }
 
     input {
-        line-height: normal
+        line-height: normal;
     }
 
     input[type=checkbox] {
         box-sizing: border-box;
-        padding: 0
+        padding: 0;
     }
 
     @font-face {
         font-family: nf-icon;
         src: url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.eot);
-        src: url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.eot?#iefix) format('embedded-opentype'),
-        url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.woff) format('woff'),
-        url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.ttf) format('truetype'),
-        url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.svg#nf-icon-v1-93) format('svg');
+        src: url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.eot?#iefix) format("embedded-opentype"),
+        url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.woff) format("woff"),
+        url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.ttf) format("truetype"),
+        url(https://assets.nflxext.com/ffe/siteui/fonts/nf-icon-v1-93.svg#nf-icon-v1-93) format("svg");
         font-weight: 400;
-        font-style: normal
+        font-style: normal;
     }
 
     .login-remember-me {
         display: inline-block;
-        margin-bottom: -5px
+        margin-bottom: -5px;
     }
 
     .login-remember-me input {
-        margin-right: 10px
+        margin-right: 10px;
     }
 
     .login-remember-me-label-text {
-        font-size: 14px
+        font-size: 14px;
     }
 
     h1 {
         margin: 0 0 10px 0;
-        padding: 0
+        padding: 0;
     }
 
     @media only screen and (min-width: 740px) {
         h1 {
-            margin-bottom: 20px
+            margin-bottom: 20px;
         }
     }
 
     .login-content {
         padding-top: 20px;
-        background-color: #f3f3f3
+        background-color: #f3f3f3;
     }
 
     @media only screen and (min-width: 740px) {
         .login-content {
-            padding: 40px
+            padding: 40px;
         }
     }
 
     @media only screen and (min-width: 500px) {
         .login-content {
-            min-width: 380px
+            min-width: 380px;
         }
     }
 
@@ -316,185 +320,185 @@
 
     @media only screen and (min-width: 740px) {
         .login-body {
+            max-width: 450px;
             margin: 0 auto;
             background-color: transparent;
-            max-width: 450px
         }
 
         .login-body:before {
-            content: "";
+            display: block;
             height: 2rem;
-            display: block
+            content: "";
         }
 
         .login-body:after {
-            content: "";
+            display: block;
             height: 2rem;
-            display: block
+            content: "";
         }
     }
 
     .ui-binary-input {
+        font-size: 16px;
         position: relative;
         box-sizing: border-box;
         padding-left: 36px;
         user-select: none;
-        font-size: 16px
     }
 
     .ui-binary-input input:disabled ~ .helper,
     .ui-binary-input input[type=checkbox]:disabled + label {
-        color: #b3b3b3
+        color: #b3b3b3;
     }
 
     .ui-binary-input .helper {
         font-size: 14px;
         line-height: 1.3em;
-        color: grey
+        color: grey;
     }
 
     .ui-binary-input input[type=checkbox] {
         position: absolute;
         top: 0;
         left: 0;
-        opacity: 0
+        opacity: 0;
     }
 
     .ui-binary-input input[type=checkbox]:focus + label::before {
-        -webkit-box-shadow: 0 0 5px 2px rgba(150, 200, 255, .6);
+        border-color: grey;
         -moz-box-shadow: 0 0 5px 2px rgba(150, 200, 255, .6);
+        -webkit-box-shadow: 0 0 5px 2px rgba(150, 200, 255, .6);
         box-shadow: 0 0 5px 2px rgba(150, 200, 255, .6);
-        border-color: grey
     }
 
     .ui-binary-input input[type=checkbox] + label {
-        color: #333;
+        line-height: 1.2;
         position: relative;
         display: block;
-        line-height: 1.2;
-        padding: 6px 0
+        padding: 6px 0;
+        color: #333;
     }
 
     .ui-binary-input input[type=checkbox] + label:before {
-        content: "";
         position: absolute;
-        display: block;
         top: 2px;
         left: -36px;
+        display: block;
         padding: 0;
+        content: "";
         border: 1px solid #b3b3b3;
-        background-color: #fff
+        background-color: #fff;
     }
 
     .ui-binary-input input[type=checkbox] + label:after {
-        position: absolute
+        position: absolute;
     }
 
     .ui-binary-input input[type=checkbox] + label:before {
         width: 25px;
-        height: 25px
+        height: 25px;
     }
 
     .ui-binary-input input[type=checkbox]:checked + label:after {
-        color: #0080ff;
-        content: "\e804";
+        font-family: nf-icon;
+        font-size: 28px;
         top: -2px;
         left: -36px;
-        font-family: nf-icon;
-        font-size: 28px
+        content: "\e804";
+        color: #0080ff;
     }
 
     .ui-binary-input input[type=checkbox]:disabled + label:after {
-        color: #dcdcdc
+        color: #dcdcdc;
     }
 
     .nfTextField {
-        box-sizing: border-box;
         font-size: 16px;
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        height: 44px;
+        padding: 10px 11px;
+        color: #000;
         border: solid 1px #8c8c8c;
         border-radius: 2px;
-        display: block;
         appearance: none;
-        width: 100%;
-        color: #000;
-        padding: 10px 11px;
-        height: 44px
     }
 
     .nfTextField:invalid,
     .nfTextField:valid {
-        box-shadow: none
+        box-shadow: none;
     }
 
     .nfTextField:focus {
         border-color: #0071eb;
-        outline: 0
+        outline: 0;
     }
 
     .nfTextField:disabled {
         color: #a6a6a6;
-        border-color: #ccc
+        border-color: #ccc;
     }
 
     .nfInput {
+        position: relative;
         max-width: 500px;
-        position: relative
     }
 
     .nfInput .nfInputPlacement {
-        position: relative
+        position: relative;
     }
 
     .nfInput .nfInputPlacement.showInvalidIcon .nfTextField,
     .nfInput .nfInputPlacement.showValidIcon .nfTextField {
-        padding-right: 40px
+        padding-right: 40px;
     }
 
     .nfInput .placeLabel {
+        font-size: 14px;
         position: absolute;
         top: 50%;
         left: 10px;
-        color: #8c8c8c;
-        font-size: 14px;
         transition: font .1s ease, top .1s ease, transform .1s ease;
-        transform: translateY(-50%)
+        transform: translateY(-50%);
+        color: #8c8c8c;
     }
 
     @media only screen and (min-width: 740px) {
         .nfInput .placeLabel {
-            font-size: 16px
+            font-size: 16px;
         }
     }
 
     .nfInput .nfTextField {
+        width: 100%;
         height: 48px;
         padding: 10px 10px 0;
-        width: 100%
     }
 
     .nfInput .nfTextField:focus + .placeLabel {
-        top: 4px;
         font-size: 11px;
-        transform: translateY(0)
+        top: 4px;
+        transform: translateY(0);
     }
 
     .nfInput .nfTextField:-webkit-autofill + .placeLabel {
-        top: 4px;
         font-size: 11px;
-        transform: translateY(0)
+        top: 4px;
+        transform: translateY(0);
     }
 
     .nfEmailPhoneControls {
-        position: relative
+        position: relative;
     }
 
     .nfPasswordInput {
         position: relative;
-        z-index: 0
+        z-index: 0;
     }
 
     .nfPasswordInput .nfTextField {
-        background: 0 0
+        background: 0 0;
     }
 
     .nfPasswordControls {
@@ -503,210 +507,187 @@
         display: -moz-box;
         display: -ms-flexbox;
         display: flex;
-        background: #fff
+        background: #fff;
     }
 
     .nfPasswordControls > label {
-        -webkit-box-flex: 1;
         -webkit-flex-grow: 1;
+        flex-grow: 1;
+        -webkit-box-flex: 1;
         -moz-box-flex: 1;
         -ms-flex-positive: 1;
-        flex-grow: 1
     }
 
     .nfPasswordHasToggle .nfPasswordControls .nfPasswordToggle,
     .nfPasswordHasToggle .nfPasswordControls .nfTextField {
+        height: 46px;
         border: 0;
-        -webkit-border-radius: 0;
         -moz-border-radius: 0;
+        -webkit-border-radius: 0;
         border-radius: 0;
-        height: 46px
     }
 
     .nfPasswordToggle {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        color: #8c8c8c;
         font-size: 14px;
+        flex-grow: 0;
+        flex-shrink: 0;
+        color: #8c8c8c;
         border: 0;
         background: 0 0;
-        -webkit-box-flex: 0;
-        -webkit-flex-grow: 0;
-        -moz-box-flex: 0;
-        -ms-flex-positive: 0;
-        flex-grow: 0;
-        -webkit-flex-shrink: 0;
-        -ms-flex-negative: 0;
-        flex-shrink: 0
+        appearance: none;
     }
 
     .btn {
-        display: inline-block;
-        text-decoration: none;
-        line-height: 1em;
-        vertical-align: middle;
-        cursor: pointer;
         font-weight: 400;
-        letter-spacing: .1px;
-        -webkit-border-radius: 2px;
-        -moz-border-radius: 2px;
-        border-radius: 2px;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
+        line-height: 1em;
+        position: relative;
+        display: inline-block;
+        box-sizing: border-box;
+        cursor: pointer;
         user-select: none;
         text-align: center;
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
-        box-sizing: border-box;
-        border: 0;
-        position: relative;
+        vertical-align: middle;
+        text-decoration: none;
+        letter-spacing: 0.1px;
         color: #000;
+        border: 0;
+        border-radius: 2px;
         background-color: #e6e6e6;
         background-image: linear-gradient(to bottom, #e6e6e6, #ddd);
-        -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, .2);
-        -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, .2);
-        box-shadow: 0 1px 0 rgba(0, 0, 0, .2)
+        box-shadow: 0 1px 0 rgba(0, 0, 0, .2);
     }
 
     .btn:hover {
         text-decoration: none;
         background: #eaeaea;
-        -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, .2);
-        -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, .2);
-        box-shadow: 0 1px 0 rgba(0, 0, 0, .2)
+        box-shadow: 0 1px 0 rgba(0, 0, 0, .2);
     }
 
     .btn:active {
-        background: #c2c2c2
+        background: #c2c2c2;
     }
 
     .btn-submit {
         color: #fff;
         background-color: #0080ff;
         background-image: linear-gradient(to bottom, #0080ff, #0277ec);
-        -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, .55);
-        -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, .55);
-        box-shadow: 0 1px 0 rgba(0, 0, 0, .55)
+        box-shadow: 0 1px 0 rgba(0, 0, 0, .55);
     }
 
     .btn-submit:hover {
         background: #2490fd;
-        -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, .55);
-        -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, .55);
-        box-shadow: 0 1px 0 rgba(0, 0, 0, .55)
+        box-shadow: 0 1px 0 rgba(0, 0, 0, .55);
     }
 
     .btn-submit:active {
-        background: #0166c9
+        background: #0166c9;
     }
 
     .btn {
-        position: relative;
         font-size: 1em;
-        padding: 25px 2em;
+        position: relative;
         min-width: 74px;
         min-height: 50px;
-        margin: .5em .5em .5em 0
+        margin: .5em .5em .5em 0;
+        padding: 25px 2em;
     }
 
     @media only screen and (max-width: 500px) {
         .btn {
             width: 100%;
-            margin: .5em auto
+            margin: .5em auto;
         }
     }
 
     .btn.btn-small {
+        line-height: 50px;
         display: block;
         width: 100%;
-        padding: 0;
         margin: .5em auto;
-        line-height: 50px
+        padding: 0;
     }
 
     @media only screen and (min-width: 500px) {
         .btn.btn-small {
-            display: inline-block;
             font-size: 13px;
+            line-height: 1em;
+            display: inline-block;
+            width: auto;
             min-width: 98px;
             min-height: 37px;
             margin-right: .5em;
             padding: 12px 1em;
-            width: auto;
-            line-height: 1em
         }
     }
 
     .login-input {
-        padding-bottom: 24px
+        padding-bottom: 24px;
     }
 
     .login-form {
-        margin-bottom: 10px
+        margin-bottom: 10px;
     }
 
     .login-button.btn {
         width: 100%;
-        background: #e50914
+        background: #e50914;
     }
 
     .login-button.btn:disabled {
-        background: #808080
+        background: #808080;
     }
 
     @media only screen and (min-width: 500px) {
         .login-button.btn {
+            font-size: 18px;
             padding: 16px;
-            font-size: 18px
         }
     }
 
     @media only screen and (min-width: 360px) {
         .login-button.btn {
             width: 100%;
-            max-width: 100%
+            max-width: 100%;
         }
     }
 
     .hybrid-login-form {
-        background-color: rgba(0, 0, 0, .75);
-        border-radius: 4px;
-        box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        margin: 0;
+        box-sizing: border-box;
+        width: 100%;
         min-height: 515px;
+        margin: 0;
         padding: 20px 0 30px;
-        width: 100%
+        border-radius: 4px;
+        background-color: rgba(0, 0, 0, .75);
     }
 
     .hybrid-login-form.hybrid-login-form-signup {
-        min-height: 550px
+        min-height: 550px;
     }
 
     @media only screen and (min-width: 740px) {
         .hybrid-login-form {
             min-height: 625px;
+            margin-bottom: 90px;
             padding: 60px 68px 40px;
-            margin-bottom: 90px
         }
 
         .hybrid-login-form.hybrid-login-form-signup {
-            min-height: 540px
+            min-height: 540px;
         }
     }
 
     .hybrid-login-form .hybrid-login-form-main {
-        flex-grow: 1
+        flex-grow: 1;
     }
 
     .hybrid-login-form h1 {
-        color: #fff;
         font-size: 32px;
         font-weight: 700;
-        margin-bottom: 28px
+        margin-bottom: 28px;
+        color: #fff;
     }
 
     .hybrid-login-form .nfInput {
@@ -714,178 +695,174 @@
     }
 
     .hybrid-login-form .nfTextField {
-        border-radius: 4px;
-        border: 0;
-        color: #fff;
-        height: 50px;
         line-height: 50px;
-        padding: 16px 20px 0
+        height: 50px;
+        padding: 16px 20px 0;
+        color: #fff;
+        border: 0;
+        border-radius: 4px;
     }
 
     .hybrid-login-form .login-input {
-        padding-bottom: 16px
+        padding-bottom: 16px;
     }
 
     .hybrid-login-form .placeLabel {
-        left: 20px
+        left: 20px;
     }
 
     .hybrid-login-form .nfTextField:-webkit-autofill + .placeLabel {
+        top: 7px;
         color: #000;
-        top: 7px
     }
 
     .hybrid-login-form .nfTextField:focus + .placeLabel {
-        top: 7px
+        top: 7px;
     }
 
     .hybrid-login-form .login-input-static .nfTextField + .placeLabel {
-        top: 7px;
         font-size: 11px;
-        transform: translateY(0)
+        top: 7px;
+        transform: translateY(0);
     }
 
     .hybrid-login-form .nfEmailPhoneInError .nfEmailPhoneControls,
     .hybrid-login-form .nfPasswordInError .nfPasswordControls {
-        position: relative
+        position: relative;
     }
 
     .hybrid-login-form .nfEmailPhoneInError .nfEmailPhoneControls::after,
     .hybrid-login-form .nfPasswordInError .nfPasswordControls::after {
-        border-bottom: 2px solid #e87c03;
-        border-bottom-left-radius: 4px;
-        border-bottom-right-radius: 4px;
-        bottom: 0;
-        content: '';
-        display: block;
-        height: 6px;
-        left: 0;
-        pointer-events: none;
         position: absolute;
-        width: 100%
+        bottom: 0;
+        left: 0;
+        display: block;
+        width: 100%;
+        height: 6px;
+        content: "";
+        pointer-events: none;
+        border-bottom: 2px solid #e87c03;
+        border-bottom-right-radius: 4px;
+        border-bottom-left-radius: 4px;
     }
 
     .hybrid-login-form .nfEmailPhoneControls {
+        border: 0;
         border-radius: 4px;
-        border: 0
     }
 
     .hybrid-login-form .nfEmailPhoneControls .nfTextField {
-        background: #333
+        background: #333;
     }
 
     .hybrid-login-form .nfEmailPhoneControls .nfTextField:focus {
-        background: #454545
+        background: #454545;
     }
 
     .hybrid-login-form .nfEmailPhoneControls .nfTextField::-ms-clear {
+        margin-top: -15px;
         color: #8c8c8c;
-        margin-top: -15px
     }
 
     .hybrid-login-form .nfEmailPhoneControls.nfEmailPhoneHasSelector .nfTextField {
-        padding-right: 88px
+        padding-right: 88px;
     }
 
     .hybrid-login-form .nfPasswordControls {
-        border-radius: 4px;
         border: 0;
-        background: #333
+        border-radius: 4px;
+        background: #333;
     }
 
     .hybrid-login-form .nfPasswordControls .nfTextField {
-        height: 50px
+        height: 50px;
     }
 
     .hybrid-login-form .nfPasswordControls .nfTextField::-ms-clear,
     .hybrid-login-form .nfPasswordControls .nfTextField::-ms-reveal {
+        margin-top: -15px;
         color: #8c8c8c;
-        margin-top: -15px
     }
 
     .hybrid-login-form .nfPasswordControls .nfPasswordToggle {
+        display: none;
         height: 50px;
         padding: 0 12px;
-        display: none
     }
 
     .hybrid-login-form .nfPasswordHasToggle .nfPasswordControls {
-        background: #454545
+        background: #454545;
     }
 
     .hybrid-login-form .nfPasswordHasToggle .nfPasswordControls .nfTextField {
+        padding-right: 0;
         border-top-left-radius: 4px;
         border-bottom-left-radius: 4px;
-        padding-right: 0
     }
 
     .hybrid-login-form .nfPasswordHasToggle .nfPasswordControls .nfTextField:-webkit-autofill {
-        padding-right: 20px
+        padding-right: 20px;
     }
 
     .hybrid-login-form .nfPasswordHasToggle .nfPasswordControls .nfPasswordToggle {
-        display: block
+        display: block;
     }
 
     .hybrid-login-form .login-button {
-        border-radius: 4px;
         font-size: 16px;
         font-weight: 700;
-        margin: 24px 0 12px
+        margin: 24px 0 12px;
+        border-radius: 4px;
     }
 
     .hybrid-login-form .hybrid-login-form-help {
-        display: -webkit-box;
-        display: -webkit-flex;
-        display: -moz-box;
-        display: -ms-flexbox;
-        display: flex
+        display: flex;
     }
 
     .hybrid-login-form .login-remember-me {
         flex-grow: 1;
-        padding-left: 20px
+        padding-left: 20px;
     }
 
     .hybrid-login-form .login-remember-me input[type=checkbox] + label {
-        padding: 0
+        padding: 0;
     }
 
     .hybrid-login-form .login-remember-me input[type=checkbox] + label::before {
-        background: #737373;
-        border-radius: 2px;
-        border: 0;
-        height: 16px;
         left: -20px;
-        width: 16px
+        width: 16px;
+        height: 16px;
+        border: 0;
+        border-radius: 2px;
+        background: #737373;
     }
 
     .hybrid-login-form .login-remember-me input[type=checkbox]:active + label::before,
     .hybrid-login-form .login-remember-me input[type=checkbox]:focus + label::before {
         background: #e6e6e6;
-        box-shadow: none
+        box-shadow: none;
     }
 
     .hybrid-login-form .login-remember-me input[type=checkbox]:checked + label::after {
-        color: #000;
         font-size: 18px;
+        top: 0;
         left: -21px;
-        top: 0
+        color: #000;
     }
 
     .hybrid-login-form .login-remember-me-label-text {
-        color: #b3b3b3;
         font-size: 13px;
-        font-weight: 500
+        font-weight: 500;
+        color: #b3b3b3;
     }
 
     .hybrid-login-form .login-help-link {
-        cursor: pointer;
-        color: #b3b3b3;
-        flex: 0 0 1;
         font-size: 13px;
         font-weight: 500;
-        padding-top: 2px
+        flex: 0 0 1;
+        padding-top: 2px;
+        cursor: pointer;
+        color: #b3b3b3;
     }
 
     .hybrid-login-form .hybrid-login-form-other {
@@ -893,36 +870,36 @@
     }
 
     .hybrid-login-form .facebookForm .btn-submit {
+        min-height: 0;
         margin-top: 16px;
-        min-height: 0
     }
 
     .hybrid-login-form .login-signup-now {
-        color: #737373;
         font-size: 16px;
         font-weight: 500;
-        margin-top: 16px
+        margin-top: 16px;
+        color: #737373;
     }
 
     .hybrid-login-form .login-signup-now a {
-        color: #fff
+        color: #fff;
     }
 
     .errors {
-        list-style-type: none;
-        padding: 10px;
         margin: 0;
-        border: 2px solid #be6283;
+        padding: 10px;
+        list-style-type: none;
         color: #be6283;
+        border: 2px solid #be6283;
         background: rgba(190, 98, 131, 0.3);
     }
 
     .success {
-        list-style-type: none;
-        padding: 10px;
         margin: 0;
-        border: 2px solid #33cccc;
+        padding: 10px;
+        list-style-type: none;
         color: #33cccc;
+        border: 2px solid #33cccc;
         background: rgba(98, 190, 131, 0.3);
     }
 </style>

@@ -33,11 +33,11 @@
 
 <style>
     .loginButton {
-        background-color: #e50914;
-        color: white;
-        padding: 7px 15px;
         font-size: 1rem;
-        border-radius: 3px;
         float: none;
+        padding: 7px 15px;
+        color: white;
+        border-radius: 3px;
+        background-color: #e50914;
     }
 </style>

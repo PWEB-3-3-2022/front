@@ -2,15 +2,15 @@
   export let media;
 </script>
 
-<img alt="thumbnail" class="mosaic-tile" src={media.poster} on:click>
+<img alt="thumbnail" class="mosaic-tile" on:click src={media.poster}>
 
 <style>
     .mosaic-tile {
-        margin: 1em;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        transition: 0.2s;
         max-width: 310px;
         max-height: 310px;
+        margin: 1em;
+        transition: 0.2s;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     }
 
     .mosaic-tile:hover {
