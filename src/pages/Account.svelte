@@ -2,6 +2,7 @@
   import { push } from 'svelte-spa-router';
   import { getAccountInfos } from '../api.js';
   import { getAuthToken, logged } from '../account.js';
+  import FullPage from './FullPage.svelte';
 
   const expanded = {};
   expanded.profile_0 = false;
@@ -32,7 +33,8 @@
   });
 </script>
 
-<div dir="ltr" lang="fr-FR">
+
+<FullPage>
     <div class="bd">
         <div class="responsive-account-container">
             <div>
@@ -237,7 +239,7 @@
             </symbol>
         </defs>
     </svg>
-</div>
+</FullPage>
 
 <style>
     header, section {

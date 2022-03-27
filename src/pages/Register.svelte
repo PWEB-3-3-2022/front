@@ -1,6 +1,7 @@
 <script>
   import * as api from '../api';
   import { validateEmail } from '../utils.js';
+  import SimplePage from './SimplePage.svelte';
 
   let name = '';
   let email = '';
@@ -68,84 +69,86 @@
   }
 </script>
 
-<div class="login-body">
-    <div class="login-content login-form hybrid-login-form hybrid-login-form-signup">
-        <div class="hybrid-login-form-main">
-            <h1>Créer un compte</h1>
-            <form on:submit|preventDefault={onSubmit}>
-                <div class="nfInput nfEmailPhoneInput login-input login-input-email">
-                    <div class="nfInputPlacement">
-                        <div class="nfEmailPhoneControls">
-                            <input autocomplete="name" bind:value={name} class="nfTextField" id="id_userLoginId"
-                                   name="userLoginId" tabindex="0" type="text"/>
-                            <label class="placeLabel" for="id_userLoginId">Nom complet</label>
+<SimplePage>
+    <div class="login-body">
+        <div class="login-content login-form hybrid-login-form hybrid-login-form-signup">
+            <div class="hybrid-login-form-main">
+                <h1>Créer un compte</h1>
+                <form on:submit|preventDefault={onSubmit}>
+                    <div class="nfInput nfEmailPhoneInput login-input login-input-email">
+                        <div class="nfInputPlacement">
+                            <div class="nfEmailPhoneControls">
+                                <input autocomplete="name" bind:value={name} class="nfTextField" id="id_userLoginId"
+                                       name="userLoginId" tabindex="0" type="text"/>
+                                <label class="placeLabel" for="id_userLoginId">Nom complet</label>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="nfInput nfEmailPhoneInput login-input login-input-email">
-                    <div class="nfInputPlacement">
-                        <div class="nfEmailPhoneControls">
-                            <input autocomplete="email" bind:value={email} class="nfTextField" id="id_userLoginId"
-                                   name="userLoginId" tabindex="0" type="text"/>
-                            <label class="placeLabel" for="id_userLoginId">E-mail</label>
+                    <div class="nfInput nfEmailPhoneInput login-input login-input-email">
+                        <div class="nfInputPlacement">
+                            <div class="nfEmailPhoneControls">
+                                <input autocomplete="email" bind:value={email} class="nfTextField" id="id_userLoginId"
+                                       name="userLoginId" tabindex="0" type="text"/>
+                                <label class="placeLabel" for="id_userLoginId">E-mail</label>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="nfInput nfPasswordInput login-input login-input-password"
-                     class:nfPasswordHasToggle={showPasswordToggle}
-                     id="pasw_control">
-                    <div class="nfInputPlacement">
-                        <div class="nfPasswordControls">
-                            <input autocomplete="password" bind:this={passwordInput}
-                                   class="nfTextField"
-                                   id="passwordInput" name="password"
-                                   on:blur={() => { showPasswordToggle = false; }}
-                                   on:focus={() => { showPasswordToggle = true; }}
-                                   tabindex="0"
-                                   type={showPassword ? 'text' : 'password'}/>
-                            <label class="placeLabel" for="passwordInput">Mot de passe</label>
-                            <button class="nfPasswordToggle" id="id_password_toggle"
-                                    on:click={() => { showPassword = !showPassword; }}
-                                    style:display={showPasswordToggle ? 'block' : 'none'}
-                                    title="Afficher le mot de passe"
-                                    type="button">{showPassword
-                                ? 'MASQUER'
-                                : 'AFFICHER'}
-                            </button>
+                    <div class="nfInput nfPasswordInput login-input login-input-password"
+                         class:nfPasswordHasToggle={showPasswordToggle}
+                         id="pasw_control">
+                        <div class="nfInputPlacement">
+                            <div class="nfPasswordControls">
+                                <input autocomplete="password" bind:this={passwordInput}
+                                       class="nfTextField"
+                                       id="passwordInput" name="password"
+                                       on:blur={() => { showPasswordToggle = false; }}
+                                       on:focus={() => { showPasswordToggle = true; }}
+                                       tabindex="0"
+                                       type={showPassword ? 'text' : 'password'}/>
+                                <label class="placeLabel" for="passwordInput">Mot de passe</label>
+                                <button class="nfPasswordToggle" id="id_password_toggle"
+                                        on:click={() => { showPassword = !showPassword; }}
+                                        style:display={showPasswordToggle ? 'block' : 'none'}
+                                        title="Afficher le mot de passe"
+                                        type="button">{showPassword
+                                    ? 'MASQUER'
+                                    : 'AFFICHER'}
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                {#if isLoading}
-                    <button value="disabled" disabled class="btn login-button btn-submit btn-small" type="submit"
-                            tabindex="0">Creating account...
-                    </button>
-                {:else}
-                    <button class="btn login-button btn-submit btn-small" type="submit" autoComplete="off"
-                            tabindex="0">Create account
-                    </button>
-                {/if}
+                    {#if isLoading}
+                        <button value="disabled" disabled class="btn login-button btn-submit btn-small" type="submit"
+                                tabindex="0">Creating account...
+                        </button>
+                    {:else}
+                        <button class="btn login-button btn-submit btn-small" type="submit" autoComplete="off"
+                                tabindex="0">Create account
+                        </button>
+                    {/if}
 
-                {#if errors.length > 0}
-                    <ul class="errors">
-                        {#each errors as error}
-                            <li>{error}</li>
-                        {/each}
-                    </ul>
-                {/if}
-                {#if authSuccess === 'Account successfully created!'}
-                    <ul class="success">
-                        <li>{authSuccess}</li>
-                    </ul>
-                {/if}
-            </form>
-        </div>
-        <div class="hybrid-login-form-other">
-            <div class="login-signup-now">Vous avez déjà un compte ?
-                <a class=" " href="#/login" target="_self">Connectez-vous</a>
+                    {#if errors.length > 0}
+                        <ul class="errors">
+                            {#each errors as error}
+                                <li>{error}</li>
+                            {/each}
+                        </ul>
+                    {/if}
+                    {#if authSuccess === 'Account successfully created!'}
+                        <ul class="success">
+                            <li>{authSuccess}</li>
+                        </ul>
+                    {/if}
+                </form>
+            </div>
+            <div class="hybrid-login-form-other">
+                <div class="login-signup-now">Vous avez déjà un compte ?
+                    <a class=" " href="#/login" target="_self">Connectez-vous</a>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</SimplePage>
 
 <style>
     .nfPasswordInput {
