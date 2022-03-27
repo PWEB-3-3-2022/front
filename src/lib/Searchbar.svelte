@@ -1,19 +1,19 @@
 <script>
-  import { push, replace } from 'svelte-spa-router';
+  import { replace } from 'svelte-spa-router';
 
   let query = '';
 
-  function onSearch() {
-    push(`/search?query=${query}`);
-  }
-
   function onKeyUp() {
-    replace(`/search?query=${query}`);
+    if (query === '') {
+      replace('/');
+    } else {
+      replace(`/search?query=${query}`);
+    }
   }
 </script>
 
-<form on:submit|preventDefault={onSearch}>
-    <input bind:value={query} id="search-input" name="query" on:keyup={onKeyUp} placeholder="Search..." type="text">
+<form on:submit|preventDefault>
+    <input bind:value={query} id="search-input" on:keyup={onKeyUp} placeholder="Search..." type="text">
 </form>
 
 <style>

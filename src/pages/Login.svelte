@@ -2,7 +2,6 @@
   import { push } from 'svelte-spa-router';
   import * as api from '../api';
   import * as account from '../account';
-  import SimplePage from './SimplePage.svelte';
 
   if (account.isLoggedIn()) {
     push('#/');
@@ -66,88 +65,86 @@
   }
 </script>
 
-<SimplePage>
-    <div id="main">
-        <div class="login-content login-form hybrid-login-form hybrid-login-form-signup">
-            <div class="hybrid-login-form-main">
-                <h1>S&#x27;identifier</h1>
-                <form on:submit|preventDefault={onSubmit}>
-                    <div class="nfInput nfEmailPhoneInput login-input login-input-email">
-                        <div class="nfInputPlacement">
-                            <div class="nfEmailPhoneControls">
-                                <input autocomplete="email" bind:value={email} class="nfTextField" id="id_userLoginId"
-                                       name="userLoginId" tabindex="0" type="text"/>
-                                <label class="placeLabel" for="id_userLoginId">E-mail</label>
-                            </div>
+<div id="main">
+    <div class="login-content login-form hybrid-login-form hybrid-login-form-signup">
+        <div class="hybrid-login-form-main">
+            <h1>S&#x27;identifier</h1>
+            <form on:submit|preventDefault={onSubmit}>
+                <div class="nfInput nfEmailPhoneInput login-input login-input-email">
+                    <div class="nfInputPlacement">
+                        <div class="nfEmailPhoneControls">
+                            <input autocomplete="email" bind:value={email} class="nfTextField" id="id_userLoginId"
+                                   name="userLoginId" tabindex="0" type="text"/>
+                            <label class="placeLabel" for="id_userLoginId">E-mail</label>
                         </div>
                     </div>
-                    <div class="nfInput nfPasswordInput login-input login-input-password"
-                         class:nfPasswordHasToggle={showPasswordToggle}
-                         id="pasw_control">
-                        <div class="nfInputPlacement">
-                            <div class="nfPasswordControls">
-                                <input autocomplete="password" bind:this={passwordInput}
-                                       class="nfTextField"
-                                       id="passwordInput" name="password"
-                                       on:blur={() => { showPasswordToggle = false; }}
-                                       on:focus={() => { showPasswordToggle = true; }}
-                                       tabindex="0"
-                                       type={showPassword ? 'text' : 'password'}/>
-                                <label class="placeLabel" for="passwordInput">Mot de passe</label>
-                                <button class="nfPasswordToggle" id="id_password_toggle"
-                                        on:click={() => { showPassword = !showPassword; }}
-                                        style:display={showPasswordToggle ? 'block' : 'none'}
-                                        title="Afficher le mot de passe"
-                                        type="button">{showPassword
-                                    ? 'MASQUER'
-                                    : 'AFFICHER'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    {#if isLoading}
-                        <button value="disabled" disabled class="btn login-button btn-submit btn-small" type="submit"
-                                tabindex="0">Logging in...
-                        </button>
-                    {:else}
-                        <button class="btn login-button btn-submit btn-small" type="submit" autoComplete="off"
-                                tabindex="0">S&#x27;identifier
-                        </button>
-                    {/if}
-                    <div class="hybrid-login-form-help">
-                        <div class="ui-binary-input login-remember-me">
-                            <input bind:checked={rememberMe} class="" id="bxid_rememberMe_true" name="rememberMe"
-                                   tabindex="0"
-                                   type="checkbox" value="true"/>
-                            <label for="bxid_rememberMe_true"><span
-                                    class="login-remember-me-label-text">Se souvenir de moi</span></label>
-                            <div class="helper"></div>
-                        </div>
-                        <a class="link login-help-link" href="#/LoginHelp" target="_self">Besoin d&#x27;aide ?</a>
-                    </div>
-
-                    {#if errors.length > 0}
-                        <ul class="errors">
-                            {#each errors as error}
-                                <li>{error}</li>
-                            {/each}
-                        </ul>
-                    {/if}
-                    {#if authSuccess === 'Successfully logged in!'}
-                        <ul class="success">
-                            <li>{authSuccess}</li>
-                        </ul>
-                    {/if}
-                </form>
-            </div>
-            <div class="hybrid-login-form-other">
-                <div class="login-signup-now">Première visite sur TCflix ?
-                    <a class=" " href="#/register" target="_self">Inscrivez-vous</a>
                 </div>
+                <div class="nfInput nfPasswordInput login-input login-input-password"
+                     class:nfPasswordHasToggle={showPasswordToggle}
+                     id="pasw_control">
+                    <div class="nfInputPlacement">
+                        <div class="nfPasswordControls">
+                            <input autocomplete="password" bind:this={passwordInput}
+                                   class="nfTextField"
+                                   id="passwordInput" name="password"
+                                   on:blur={() => { showPasswordToggle = false; }}
+                                   on:focus={() => { showPasswordToggle = true; }}
+                                   tabindex="0"
+                                   type={showPassword ? 'text' : 'password'}/>
+                            <label class="placeLabel" for="passwordInput">Mot de passe</label>
+                            <button class="nfPasswordToggle" id="id_password_toggle"
+                                    on:click={() => { showPassword = !showPassword; }}
+                                    style:display={showPasswordToggle ? 'block' : 'none'}
+                                    title="Afficher le mot de passe"
+                                    type="button">{showPassword
+                                ? 'MASQUER'
+                                : 'AFFICHER'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {#if isLoading}
+                    <button value="disabled" disabled class="btn login-button btn-submit btn-small" type="submit"
+                            tabindex="0">Logging in...
+                    </button>
+                {:else}
+                    <button class="btn login-button btn-submit btn-small" type="submit" autoComplete="off"
+                            tabindex="0">S&#x27;identifier
+                    </button>
+                {/if}
+                <div class="hybrid-login-form-help">
+                    <div class="ui-binary-input login-remember-me">
+                        <input bind:checked={rememberMe} class="" id="bxid_rememberMe_true" name="rememberMe"
+                               tabindex="0"
+                               type="checkbox" value="true"/>
+                        <label for="bxid_rememberMe_true"><span
+                                class="login-remember-me-label-text">Se souvenir de moi</span></label>
+                        <div class="helper"></div>
+                    </div>
+                    <a class="link login-help-link" href="#/LoginHelp" target="_self">Besoin d&#x27;aide ?</a>
+                </div>
+
+                {#if errors.length > 0}
+                    <ul class="errors">
+                        {#each errors as error}
+                            <li>{error}</li>
+                        {/each}
+                    </ul>
+                {/if}
+                {#if authSuccess === 'Successfully logged in!'}
+                    <ul class="success">
+                        <li>{authSuccess}</li>
+                    </ul>
+                {/if}
+            </form>
+        </div>
+        <div class="hybrid-login-form-other">
+            <div class="login-signup-now">Première visite sur TCflix ?
+                <a class=" " href="#/register" target="_self">Inscrivez-vous</a>
             </div>
         </div>
     </div>
-</SimplePage>
+</div>
 
 <style>
     .nfPasswordInput {
