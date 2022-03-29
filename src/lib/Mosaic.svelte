@@ -1,17 +1,12 @@
 <script>
-  import { getContext } from 'svelte';
   import MosaicTile from './MosaicTile.svelte';
-  import Popup from './Popup.svelte';
 
   export let medias = [];
-
-  const { open } = getContext('simple-modal');
-  const showSurprise = () => open(Popup, { message: 'SUUUUUUUUUUUUU' });
 </script>
 
 <div class="mosaic">
     {#each medias as media}
-        <MosaicTile on:click={showSurprise} {media}/>
+        <MosaicTile {media}/>
     {/each}
 </div>
 

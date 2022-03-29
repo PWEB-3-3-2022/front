@@ -3,8 +3,8 @@ const API_BASE = process.env.NODE_ENV === 'production'
   ? 'https://tcflix.herokuapp.com'
   : 'http://127.0.0.1:3001';
 
-export async function searchMedias(query) {
-  const response = await fetch(`${API_BASE}/medias/search?query=${query}`);
+export async function searchMedias(query, count = 10) {
+  const response = await fetch(`${API_BASE}/medias/search?query=${query}&count=${count}`);
   return response.json();
 }
 
