@@ -5,7 +5,7 @@
   export let media;
 
   const { open } = getContext('simple-modal');
-  const openPopup = () => open(Popup, { message: media.title });
+  const openPopup = () => open(Popup, { movie : media});
 </script>
 
 <img alt="thumbnail" class="mosaic-tile" on:click={openPopup} src={media.poster_small}>
