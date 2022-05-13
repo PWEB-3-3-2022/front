@@ -1,11 +1,7 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import { getAccountInfos } from './api.js';
 
 export const logged = writable(null);
-let loggedvalue;
-logged.subscribe((value) => {
-  loggedvalue = value;
-});
 
 export async function reloadAccount() {
   await getAccountInfos().then(async (res) => {
@@ -25,5 +21,5 @@ export async function reloadAccount() {
 reloadAccount();
 
 export function isLoggedIn() {
-  return (loggedvalue !== null);
+  return (get(logged) !== null);
 }
