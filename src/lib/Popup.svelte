@@ -1,20 +1,29 @@
 <script>
-    import { Modal } from 'svelte-simple-modal';
-    import VideoPlayer from 'svelte-video-player';
+    import { Player, Video, DefaultUi } from '@vime/svelte';
 
     export let movie;
 </script>
 
-<head>
-<style>
-    body {
-        background-color: white;
-    }
+<Player>
+    <Video crossOrigin="" poster={movie.poster_small}>
+        <source data-src="https://media.vimejs.com/720p.mp4" type="video/mp4">
+    </Video>
 
+    <DefaultUi>
+    </DefaultUi>
+</Player>
+
+<h1>{movie.title}</h1>
+
+<h2>{movie.year} {movie.duration}</h2>
+
+<p>{movie.description}</p>
+
+<style>
     h1 {
         font-size: 2rem;
         text-align: left;
-        color: black;
+        color: white;
     }
 
     h2 {
@@ -23,24 +32,6 @@
     }
 
     p {
-        color: black;
+        color: white;
     }
 </style>
-</head>
-
-<body>
-<VideoPlayer width="500"
-             height="300"
-             poster= {movie.poster_small}
-             source= ''
-             color = '#F00020'
-             borderRadius = '0px'/>
-
-<h1> {movie.title} </h1>
-
-<h2> {movie.year} {movie.duration} </h2>
-
-<p> {movie.description} </p>
-
-</body>
-
