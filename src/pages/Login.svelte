@@ -11,7 +11,7 @@
 
   let email = '';
   let errors = {};
-  let authSuccess = '';
+  const authSuccess = '';
   let isLoading = false;
 
   let passwordInput;
@@ -38,11 +38,11 @@
           const body = await response.json();
           if ('error' in body && body.error === 'NoAccountError') {
             errors.push('Invalid credentials');
-          } else if ('authToken' in body && body.authToken !== '') {
-            authSuccess = 'Successfully logged in!';
-            document.cookie = `authToken=${body.authToken}; path=/; ${rememberMe ? `expires=${body.expires}` : ''}`;
-            await account.reloadAccount(body.authToken);
+          } else if ('ok' in body && body.ok === 'ok') {
+            await account.reloadAccount();
             await push('#/');
+          } else {
+            errors.push('Unknown error server did not respond');
           }
         } else if (response.status === 400) {
           errors.push('Bad Request');

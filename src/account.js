@@ -1,27 +1,14 @@
 import { writable } from 'svelte/store';
-import { getCookie } from './utils.js';
 import { getAccountInfos } from './api.js';
 
-export function isLoggedIn() {
-  return (getCookie('authToken') !== null && getCookie('authToken') !== '');
-}
-
-export function getAuthToken() {
-  return getCookie('authToken');
-}
-
-export const logged = writable(null, (set) => {
-  const token = getAuthToken();
-  if (token) {
-    // eslint-disable-next-line no-use-before-define
-    reloadAccount(token).catch(console.log);
-  } else {
-    set(null);
-  }
+export const logged = writable(null);
+let loggedvalue;
+logged.subscribe((value) => {
+  loggedvalue = value;
 });
 
-export async function reloadAccount(token) {
-  await getAccountInfos({ authToken: token }).then(async (res) => {
+export async function reloadAccount() {
+  await getAccountInfos().then(async (res) => {
     if (res.ok) {
       const body = await res.json();
       if ('error' in body) {
@@ -33,4 +20,10 @@ export async function reloadAccount(token) {
       logged.set(null);
     }
   });
+}
+
+reloadAccount();
+
+export function isLoggedIn() {
+  return (loggedvalue !== null);
 }
