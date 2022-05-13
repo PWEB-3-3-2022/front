@@ -44,7 +44,7 @@
     <div class="py-1">
         <a class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
            href="#/"
-           on:click={() => { document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'; logged.set(null); push('#/'); }}>Se
+           on:click={() => { logged.set(null); push('#/'); }}>Se
             déconnecter</a>
     </div>
 </div>

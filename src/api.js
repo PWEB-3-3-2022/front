@@ -35,6 +35,7 @@ export function login(payload) {
     `${API_BASE}/auth/login`,
     {
       method: 'POST',
+      credentials: 'include',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -58,16 +59,16 @@ export async function register(payload) {
   );
 }
 
-export async function getAccountInfos(payload) {
+export async function getAccountInfos() {
   return fetch(
     `${API_BASE}/me`,
     {
       method: 'POST',
+      credentials: 'include',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload),
     },
   );
 }

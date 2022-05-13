@@ -1,7 +1,7 @@
 <script>
   import { push } from 'svelte-spa-router';
   import { getAccountInfos } from '../api.js';
-  import { getAuthToken, logged } from '../account.js';
+  import { logged } from '../account.js';
 
   const expanded = {};
   expanded.profile_0 = false;
@@ -11,11 +11,10 @@
   let createdDate = '';
   let createdMonth = '';
   let createdYear = '';
-  getAccountInfos({ authToken: getAuthToken() }).then(async (response) => {
+  getAccountInfos().then(async (response) => {
     if (response.ok) {
       const body = await response.json();
       if ('error' in body) {
-        document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         logged.set(null);
         await push('#/');
         return;
