@@ -60,10 +60,9 @@ export async function getAccountInfos() {
 }
 
 export async function changeProfileEmail(payload) {
-  return fetch(
-    `${API_BASE}/me/changeProfileEmail`,
-    {
+  return fetch(`${API_BASE}/me/changeProfileEmail`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
