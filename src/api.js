@@ -58,3 +58,17 @@ export async function getAccountInfos() {
     },
   });
 }
+
+export async function changeProfileEmail(payload) {
+  return fetch(
+    `${API_BASE}/me/changeProfileEmail`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+}

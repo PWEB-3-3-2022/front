@@ -11,13 +11,15 @@
 
   let email = '';
   let errors = {};
-  const authSuccess = '';
+  let authSuccess = '';
   let isLoading = false;
 
   let passwordInput;
 
   let showPasswordToggle = false;
   let showPassword = false;
+  let hasTextEmail = false;
+  let hasTextPswd = false;
 
   function onSubmit() {
     errors = [];
@@ -39,8 +41,9 @@
           if ('error' in body && body.error === 'NoAccountError') {
             errors.push('Invalid credentials');
           } else if ('ok' in body && body.ok === 'ok') {
+            authSuccess = 'Successfully logged in!';
             await account.reloadAccount();
-            await push('#/');
+            await push('#/profile');
           } else {
             errors.push('Unknown error server did not respond');
           }
@@ -73,7 +76,7 @@
                 <div class="nfInput nfEmailPhoneInput login-input login-input-email">
                     <div class="nfInputPlacement">
                         <div class="nfEmailPhoneControls">
-                            <input autocomplete="email" bind:value={email} class="nfTextField" id="id_userLoginId"
+                            <input autocomplete="email" bind:value={email} class="nfTextField" class:hasText={hasTextEmail} on:focus={() => {hasTextEmail = true;}} on:blur={() => {if(document.getElementById('id_userLoginId').value === "") {hasTextEmail=false;} else {hasTextEmail = true;}}} id="id_userLoginId"
                                    name="userLoginId" tabindex="0" type="text"/>
                             <label class="placeLabel" for="id_userLoginId">E-mail</label>
                         </div>
@@ -85,15 +88,15 @@
                     <div class="nfInputPlacement">
                         <div class="nfPasswordControls">
                             <input autocomplete="password" bind:this={passwordInput}
-                                   class="nfTextField"
+                                   class="nfTextField" class:hasText={hasTextPswd} on:focus={() => {hasTextPswd = true;}} on:blur={() => {if(document.getElementById('passwordInput').value === "") {hasTextPswd=false;} else {hasTextPswd = true;}}}
                                    id="passwordInput" name="password"
-                                   on:blur={() => { showPasswordToggle = false; }}
-                                   on:focus={() => { showPasswordToggle = true; }}
+                                   on:blur={() => { setTimeout(() => showPasswordToggle = false, 100);}}
+                                   on:focus={() => { setTimeout(() => showPasswordToggle = true, 100);}}
                                    tabindex="0"
                                    type={showPassword ? 'text' : 'password'}/>
                             <label class="placeLabel" for="passwordInput">Mot de passe</label>
                             <button class="nfPasswordToggle" id="id_password_toggle"
-                                    on:click={() => { showPassword = !showPassword; }}
+                                    on:click={() => { showPassword = !showPassword; document.getElementById("passwordInput").focus(); }}
                                     style:display={showPasswordToggle ? 'block' : 'none'}
                                     title="Afficher le mot de passe"
                                     type="button">{showPassword
@@ -476,6 +479,7 @@
         padding: 10px 10px 0;
     }
 
+    .nfInput .hasText+.placeLabel,
     .nfInput .nfTextField:focus + .placeLabel {
         font-size: 11px;
         top: 4px;

@@ -1,23 +1,25 @@
 <script>
+    import { getUserProfiles } from '../account.js';
+    let profiles = [];
+    getUserProfiles().then((prof) => {profiles = [...prof];});
 
-  const profiles = [
-    {
-      name: 'Profile0',
-      picture: 'http://hdqwalls.com/download/mortal-kombat-x-sub-zero-2048x2048.jpg',
-    },
-    { name: 'Profile1', picture: 'https://images.hdqwalls.com/download/scorpion-in-mortal-kombat-2048x2048.jpg' }];
+    function OnClickProfile(id) {
+        const date = new Date().getDate();
+        const expirationDate = new Date().setDate(date + 7);
+        document.cookie = `profile=${id}; path=/; expires=${new Date(expirationDate).toUTCString()}`;
+    }
 </script>
 
 <div class="page-container">
     <div class="main-centered">
-        <h1 class="profile-header">Choose your fighter</h1>
+        <h1 class="profile-header">Choisissez votre profil</h1>
         <ul class="profile-list">
-            {#each profiles as profile}
+            {#each profiles as prof, i}
                 <li class="profile">
-                    <a class="profile-link" href="#/profile">
+                    <a class="profile-link" href="#/profiles" on:click={() => OnClickProfile(i)}>
                         <img alt="profile icon" class="profile-icon"
-                             src={profile.picture}/>
-                        <span class="profile-name">{profile.name}</span>
+                            src={prof.picture}/>
+                        <span class="profile-name">{prof.name}</span>
                     </a>
                 </li>
             {/each}

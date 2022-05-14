@@ -2,19 +2,23 @@
   import { push } from 'svelte-spa-router';
   import { getAccountInfos } from '../api.js';
   import { logged } from '../account.js';
+  import * as api from '../api.js';
+  import { getAuthToken, logged, getUserProfiles } from '../account.js';
+  import { validateEmail } from '../utils';
 
-  const expanded = {};
-  expanded.profile_0 = false;
+  const expanded = [];
   let email = '';
   let created = '';
   let name = '';
   let createdDate = '';
   let createdMonth = '';
   let createdYear = '';
+  let profiles = [];
   getAccountInfos().then(async (response) => {
     if (response.ok) {
       const body = await response.json();
       if ('error' in body) {
+        document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         logged.set(null);
         await push('#/');
         return;
@@ -29,185 +33,285 @@
       // TODO
     }
   });
+  getUserProfiles().then((prof) => {profiles = [...prof];});
+  let actionOnProfile = -1;
+  let hasText = true;
+  let targetProfileId = -1;
+  let changeMailError = "";
+  let mailChanged = "";
+
+  function changeProfileEmail(profileId, newEmail) {
+    if (newEmail != "" && !validateEmail(newEmail)) {
+        changeMailError = "Veuillez saisir une adresse mail valide.";
+        return;
+    }
+    changeMailError = "";
+    api.changeProfileEmail({ authToken: getAuthToken(), profileId: profileId, newEmail: newEmail }).then(async (response) => {
+        if(response.ok) {
+            const body = await response.json();
+            if ('error' in body) {
+                if (body.error == "InvalidTokenError") {
+                    document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                    logged.set(null);
+                    await push('#/');
+                    return;
+                } else if (body.error == "InvalidProfileIdError") {
+                    changeMailError = "Le profil sélectionné n'existe pas.";
+                    return;
+                } else if (body.error == "InvalidEmailError") {
+                    changeMailError = "Veuillez saisir une adresse mail valide.";
+                    return;
+                }
+            }
+            mailChanged = "La nouvelle adresse mail a bien été définie.";
+            setTimeout(() => {
+                actionOnProfile = -1;
+                mailChanged = "";
+            }, 2000);
+        }
+    });
+  }
 </script>
 
 <div class="bd">
     <div class="responsive-account-container">
-        <div>
-            <h1 class="account-header account-header-inline">Compte</h1>
-            <div class="account-section-membersince" data-uia="member-since">
-                <div class="account-section-membersince--svg"></div>
-                Membre depuis {createdMonth} {createdYear}
-            </div>
-            <div class="account-pre-messages-container" data-uia="account-pre-messages-container"></div>
-            <div class="account-messages-container"></div>
-            <div class="responsive-account-content" data-uia="account-content">
-                <div class="account-section collapsable-panel clearfix membership-section-wrapper"
-                     data-uia="membership-section">
-                    <header class="account-section-header collapsable-section-toggle">
-                        <h2 class="account-section-heading">Informations</h2>
-                    </header>
-                    <section class="collapsable-section-content account-section-content">
-                        <div class="account-subsection clearfix">
-                            <div class="clearfix">
-                                <div class="account-section-group">
-                                    <div class="account-section-item account-section-email"
-                                         data-uia="account-email">{email}</div>
-                                    <div class="account-section-item account-section-item-disabled"
-                                         data-uia="account-password">
-                                        Mot de passe : ********
-                                    </div>
-                                    <div class="account-section-item account-section-item-disabled"
-                                         data-uia="account-phone"></div>
-                                </div>
-                                <div class="account-section-group">
-                                    <div class="account-section-item"><a class="account-section-link"
-                                                                         data-uia="account-email-link"
-                                                                         href="#/">Modifier l&#x27;adresse
-                                        e-mail du compte</a></div>
-                                    <div class="account-section-item"><a class="account-section-link"
-                                                                         data-uia="account-password-link"
-                                                                         href="#/">Modifier le mot de
-                                        passe</a></div>
-                                    <div class="account-section-item"><a class="account-section-link"
-                                                                         data-uia="account-phone-link"
-                                                                         href="#/">Ajouter un
-                                        numéro de téléphone</a></div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+        {#if actionOnProfile < 0}
+            <div>
+                <h1 class="account-header account-header-inline">Compte</h1>
+                <div class="account-section-membersince" data-uia="member-since">
+                    <div class="account-section-membersince--svg"></div>
+                    Membre depuis {createdMonth} {createdYear}
                 </div>
-                <div class="account-section collapsable-panel clearfix" data-uia="profile-section">
-                    <header class="account-section-header collapsable-section-toggle">
-                        <h2 class="account-section-heading">Profils</h2>
-                    </header>
-                    <section class="collapsable-section-content account-section-content">
-                        <div class="account-subsection clearfix">
-                            <div class="profile-hub">
-                                <ul>
-                                    <li class="single-profile expanded"
-                                        class:expanded="{expanded.profile_0}"
-                                        data-uia="single-profile-0" id="profile_0"
-                                        on:click="{() => { expanded.profile_0 = !expanded.profile_0; }}">
-                                        <div aria-expanded="false" class="profile-header">
-                                            <img alt="${name}"
-                                                 class="activeProfile"
-                                                 src="https://occ-0-784-778.1.nflxso.net/dnm/api/v6/K6hjPJd6cR6FpVELC5Pd6ovHRSk/AAAABYgoIFuP4_E0zjNm4v8w6iCy69xVG0gEJgeLjbl7VR3GBolfveZOeKR0RXL1sHzRdidE4Prff-FSWhZmRICew4Zm9Q.png?r=f71"/>
-                                            <div class="profile-summary">
-                                                <h3>{name}</h3>
-                                                <div>Tous les âges</div>
-                                            </div>
-                                            <button aria-controls="profile_0"
-                                                    aria-label="Étendre ce profil"
-                                                    class="profile-action-icons">
-                                                <svg class="svg-icon svg-icon-chevron-down" fill="none" height="24"
-                                                     viewBox="0 0 24 24"
-                                                     width="24"
-                                                     xmlns="http://www.w3.org/2000/svg">
-                                                    <path clip-rule="evenodd"
-                                                          d="M19.293 7.29297L12.0001 14.5859L4.70718 7.29297L3.29297 8.70718L11.293 16.7072C11.4805 16.8947 11.7349 17.0001 12.0001 17.0001C12.2653 17.0001 12.5196 16.8947 12.7072 16.7072L20.7072 8.70718L19.293 7.29297Z"
-                                                          fill="currentColor"
-                                                          fill-rule="evenodd"></path>
-                                                </svg>
-                                            </button>
+                <div class="account-pre-messages-container" data-uia="account-pre-messages-container"></div>
+                <div class="account-messages-container"></div>
+                <div class="responsive-account-content" data-uia="account-content">
+                    <div class="account-section collapsable-panel clearfix membership-section-wrapper"
+                        data-uia="membership-section">
+                        <header class="account-section-header collapsable-section-toggle">
+                            <h2 class="account-section-heading">Informations</h2>
+                        </header>
+                        <section class="collapsable-section-content account-section-content">
+                            <div class="account-subsection clearfix">
+                                <div class="clearfix">
+                                    <div class="account-section-group">
+                                        <div class="account-section-item account-section-email"
+                                            data-uia="account-email">{email}</div>
+                                        <div class="account-section-item account-section-item-disabled"
+                                            data-uia="account-password">
+                                            Mot de passe : ********
                                         </div>
-                                        <ul class="profile-links">
-                                            <li class="account-section-item">
-                                                <a class="profile-link"
-                                                   data-uia="action-add-profile-email"
-                                                   href="/account/profile/newProfileEmail">
-                                                    <div class="profile-main">
-                                                        <h4>Adresse e-mail du profil</h4>
-                                                    </div>
-                                                    <div class="profile-change">Ajouter</div>
-                                                </a>
-                                            </li>
-                                            <li class="account-section-item">
-                                                <a class="profile-link"
-                                                   data-uia="action-language-preferences"
-                                                   href="/settings/language/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
-                                                    <div class="profile-main">
-                                                        <h4>Langue</h4>
-                                                        français
-                                                    </div>
-                                                    <div class="profile-change">Modifier</div>
-                                                </a>
-                                            </li>
-                                            <li class="account-section-item">
-                                                <a class="profile-link"
-                                                   data-uia="action-content-restrictions"
-                                                   href="/settings/restrictions/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
-                                                    <div class="profile-main">
-                                                        <h4>Restrictions d&#x27;accès</h4>
-                                                        <div>Pas de limitation d'accès.</div>
-                                                    </div>
-                                                    <div class="profile-change">Modifier</div>
-                                                </a>
-                                            </li>
-                                            <li class="account-section-item">
-                                                <a class="profile-link"
-                                                   data-uia="action-profile-lock"
-                                                   href="/settings/lock/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
-                                                    <div class="profile-main">
-                                                        <h4>Verrouillage des profils</h4>
-                                                        Désactivé
-                                                    </div>
-                                                    <div class="profile-change">Modifier</div>
-                                                </a>
-                                            </li>
-                                            <li class="account-section-item">
-                                                <a class="profile-link"
-                                                   data-uia="action-viewing-activity"
-                                                   href="/settings/viewed/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
-                                                    <div class="profile-main">
-                                                        <h4>Historique</h4>
-                                                    </div>
-                                                    <div class="profile-change">Afficher</div>
-                                                </a>
-                                            </li>
-                                            <li class="account-section-item">
-                                                <a class="profile-link"
-                                                   data-uia="action-rating-activity"
-                                                   href="/settings/rated/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
-                                                    <div class="profile-main">
-                                                        <h4>Évaluations</h4>
-                                                    </div>
-                                                    <div class="profile-change">Afficher</div>
-                                                </a>
-                                            </li>
-                                            <li class="account-section-item">
-                                                <a class="profile-link"
-                                                   data-uia="action-subtitle-preferences"
-                                                   href="/settings/subtitles/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
-                                                    <div class="profile-main">
-                                                        <h4>Affichage des sous-titres</h4>
-                                                    </div>
-                                                    <div class="profile-change">Modifier</div>
-                                                </a>
-                                            </li>
-                                            <li class="account-section-item">
-                                                <a class="profile-link"
-                                                   data-uia="action-video-quality"
-                                                   href="/settings/playback/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
-                                                    <div class="profile-main">
-                                                        <h4>Paramètres de lecture</h4>
-                                                        Lecture automatique de l&#x27;épisode suivant.
-                                                        Lecture automatique des aperçus. Qualité audio et
-                                                        vidéo par défaut.
-                                                    </div>
-                                                    <div class="profile-change">Modifier</div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
+                                        <div class="account-section-item account-section-item-disabled"
+                                            data-uia="account-phone"></div>
+                                    </div>
+                                    <div class="account-section-group">
+                                        <div class="account-section-item"><a class="account-section-link"
+                                                                            data-uia="account-email-link"
+                                                                            href="#/">Modifier l&#x27;adresse
+                                            e-mail du compte</a></div>
+                                        <div class="account-section-item"><a class="account-section-link"
+                                                                            data-uia="account-password-link"
+                                                                            href="#/">Modifier le mot de
+                                            passe</a></div>
+                                        <div class="account-section-item"><a class="account-section-link"
+                                                                            data-uia="account-phone-link"
+                                                                            href="#/">Ajouter un
+                                            numéro de téléphone</a></div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </section>
+                        </section>
+                    </div>
+                    <div class="account-section collapsable-panel clearfix" data-uia="profile-section">
+                        <header class="account-section-header collapsable-section-toggle">
+                            <h2 class="account-section-heading">Profils</h2>
+                        </header>
+                        <section class="collapsable-section-content account-section-content">
+                            <div class="account-subsection clearfix">
+                                <div class="profile-hub">
+                                    <ul>
+                                        {#each profiles as prof, i}
+                                            <li class="single-profile expanded"
+                                                class:expanded="{expanded[i]}"
+                                                data-uia="single-profile-{i}" id="profile_{i}"
+                                                on:click="{() => { expanded[i] = !expanded[i]; }}">
+                                                <div aria-expanded="false" class="profile-header">
+                                                    <img alt="${prof.name}"
+                                                        class="activeProfile"
+                                                        src={prof.picture}/>
+                                                    <div class="profile-summary">
+                                                        <h3>{prof.name}</h3>
+                                                        <div>Tous les âges</div>
+                                                    </div>
+                                                    <button aria-controls="profile_{i}"
+                                                            aria-label="Étendre ce profil"
+                                                            class="profile-action-icons">
+                                                        <svg class="svg-icon svg-icon-chevron-down" fill="none" height="24"
+                                                            viewBox="0 0 24 24"
+                                                            width="24"
+                                                            xmlns="http://www.w3.org/2000/svg">
+                                                            <path clip-rule="evenodd"
+                                                                d="M19.293 7.29297L12.0001 14.5859L4.70718 7.29297L3.29297 8.70718L11.293 16.7072C11.4805 16.8947 11.7349 17.0001 12.0001 17.0001C12.2653 17.0001 12.5196 16.8947 12.7072 16.7072L20.7072 8.70718L19.293 7.29297Z"
+                                                                fill="currentColor"
+                                                                fill-rule="evenodd"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                <ul class="profile-links">
+                                                    {#if i != 0}
+                                                        <li class="account-section-item">
+                                                            <a class="profile-link"
+                                                            data-uia="action-{prof.email != "" ? "change" : "add"}-profile-email"
+                                                            href="#/Account" on:click={() => {actionOnProfile = prof.email == "" ? 1 : 2; targetProfileId = i;}}>
+                                                                <div class="profile-main">
+                                                                    <h4>Adresse e-mail du profil</h4>
+                                                                    {prof.email != "" ? prof.email : ""}
+                                                                </div>
+                                                                <div class="profile-change">{prof.email != "" ? "Modifier" : "Ajouter"}</div>
+                                                            </a>
+                                                        </li>
+                                                    {/if}
+                                                    <li class="account-section-item">
+                                                        <a class="profile-link"
+                                                        data-uia="action-language-preferences"
+                                                        href="/settings/language/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
+                                                            <div class="profile-main">
+                                                                <h4>Langue</h4>
+                                                                français
+                                                            </div>
+                                                            <div class="profile-change">Modifier</div>
+                                                        </a>
+                                                    </li>
+                                                    <li class="account-section-item">
+                                                        <a class="profile-link"
+                                                        data-uia="action-content-restrictions"
+                                                        href="/settings/restrictions/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
+                                                            <div class="profile-main">
+                                                                <h4>Restrictions d&#x27;accès</h4>
+                                                                <div>Pas de limitation d'accès.</div>
+                                                            </div>
+                                                            <div class="profile-change">Modifier</div>
+                                                        </a>
+                                                    </li>
+                                                    <li class="account-section-item">
+                                                        <a class="profile-link"
+                                                        data-uia="action-profile-lock"
+                                                        href="/settings/lock/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
+                                                            <div class="profile-main">
+                                                                <h4>Verrouillage des profils</h4>
+                                                                Désactivé
+                                                            </div>
+                                                            <div class="profile-change">Modifier</div>
+                                                        </a>
+                                                    </li>
+                                                    <li class="account-section-item">
+                                                        <a class="profile-link"
+                                                        data-uia="action-viewing-activity"
+                                                        href="/settings/viewed/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
+                                                            <div class="profile-main">
+                                                                <h4>Historique</h4>
+                                                            </div>
+                                                            <div class="profile-change">Afficher</div>
+                                                        </a>
+                                                    </li>
+                                                    <li class="account-section-item">
+                                                        <a class="profile-link"
+                                                        data-uia="action-rating-activity"
+                                                        href="/settings/rated/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
+                                                            <div class="profile-main">
+                                                                <h4>Évaluations</h4>
+                                                            </div>
+                                                            <div class="profile-change">Afficher</div>
+                                                        </a>
+                                                    </li>
+                                                    <li class="account-section-item">
+                                                        <a class="profile-link"
+                                                        data-uia="action-subtitle-preferences"
+                                                        href="/settings/subtitles/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
+                                                            <div class="profile-main">
+                                                                <h4>Affichage des sous-titres</h4>
+                                                            </div>
+                                                            <div class="profile-change">Modifier</div>
+                                                        </a>
+                                                    </li>
+                                                    <li class="account-section-item">
+                                                        <a class="profile-link"
+                                                        data-uia="action-video-quality"
+                                                        href="/settings/playback/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
+                                                            <div class="profile-main">
+                                                                <h4>Paramètres de lecture</h4>
+                                                                Lecture automatique de l&#x27;épisode suivant.
+                                                                Lecture automatique des aperçus. Qualité audio et
+                                                                vidéo par défaut.
+                                                            </div>
+                                                            <div class="profile-change">Modifier</div>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        {/each}
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
                 </div>
             </div>
-        </div>
+        {:else}
+            {#if (actionOnProfile == 2)}
+                <form class="profile-email-form" data-uia="profile-email-form" method="post" novalidate="">
+                    <h1>Modifier l'adresse e-mail du profil</h1>
+                    <div class="profile-data">
+                        <img class="profile-icon" height="32" width="32" alt="{profiles[targetProfileId].name}" src="{profiles[targetProfileId].picture}">
+                        <span id="" class="profile-name" data-uia="profile-name">{profiles[targetProfileId].name}</span>
+                    </div>
+                    <ul class="simpleForm structural ui-grid">
+                        <li class="nfFormSpace" data-uia="field-email+wrapper">
+                            <div class="nfInput" data-uia="field-email+container">
+                                <div class="nfInputPlacement">
+                                    <label class="input_id" placeholder="email">
+                                        <input id="id_email" bind:value={profiles[targetProfileId].email} class="nfTextField hasText" class:hasText on:focus={() => {hasText = true; changeMailError = "";}} on:blur={() => {if(document.getElementById('id_email').value === "") {hasText=false;} else {hasText = true;}}} type="text" data-uia="field-email" name="email" tabindex="0" autocomplete="off" maxlength="50" minlength="5" dir="ltr">
+                                        <label class="placeLabel" for="id_email">Adresse e-mail</label>
+                                    </label>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <p style="color: red;">{changeMailError}</p>
+                    <p style="color: green;">{mailChanged}</p>
+                    <div class="nf-btn-bar profile-email-buttons">
+                        <button id="nf-btn-save" class="nf-btn nf-btn-primary nf-btn-solid nf-btn-small" type="button" autocomplete="off" tabindex="0" data-uia="save-profile-email" placeholder="" on:click={() => {changeProfileEmail(targetProfileId, profiles[targetProfileId].email)}}>ENREGISTRER</button>
+                        <button id="btn-delete" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button" autocomplete="off" tabindex="0" data-uia="delete-profile-email" placeholder="" on:click={() => {changeProfileEmail(targetProfileId, ''); profiles[targetProfileId].email = "";}}>SUPPRIMER L'ADRESSE E-MAIL</button>
+                        <button id="btn-cancel" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button" autocomplete="off" tabindex="0" data-uia="cancel-profile-email" placeholder="" on:click={() => {actionOnProfile = -1; changeMailError = ""; mailChanged = "";}}>ANNULER</button>
+                    </div>
+                </form>
+            {:else}
+                <form class="profile-email-form" data-uia="profile-email-form" method="post" novalidate="">
+                    <h1>Ajouter une adresse e-mail au profil</h1>
+                    <div class="profile-data">
+                        <img class="profile-icon" height="32" width="32" alt="{profiles[targetProfileId].name}" src="{profiles[targetProfileId].picture}">
+                        <span id="" class="profile-name" data-uia="profile-name">{profiles[targetProfileId].name}</span>
+                    </div>
+                    <ul class="simpleForm structural ui-grid">
+                        <li class="nfFormSpace" data-uia="field-email+wrapper">
+                            <div class="nfInput" data-uia="field-email+container">
+                                <div class="nfInputPlacement">
+                                    <label class="input_id" placeholder="email">
+                                        <input id="id_email" bind:value={profiles[targetProfileId].email} class="nfTextField" class:hasText on:focus={() => {hasText = true; changeMailError = "";}} on:blur={() => {if(document.getElementById('id_email').value === "") {hasText=false;} else {hasText = true;}}} type="text" data-uia="field-email" name="email" tabindex="0" autocomplete="off" maxlength="50" minlength="5" dir="ltr">
+                                        <label class="placeLabel" for="id_email">Adresse e-mail</label>
+                                    </label>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <p style="color: red;">{changeMailError}</p>
+                    <p style="color: green;">{mailChanged}</p>
+                    <div class="nf-btn-bar profile-email-buttons">
+                        <button id="nf-btn-save" class="nf-btn nf-btn-primary nf-btn-solid nf-btn-small" type="button" autocomplete="off" tabindex="0" data-uia="save-profile-email" placeholder="" on:click={() => {changeProfileEmail(targetProfileId, profiles[targetProfileId].email)}}>ENREGISTRER</button>
+                        <button id="btn-cancel" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button" autocomplete="off" tabindex="0" data-uia="cancel-profile-email" placeholder="" on:click={() => {actionOnProfile = -1; changeMailError = ""; mailChanged = "";}}>ANNULER</button>
+                    </div>
+                </form>
+            {/if}
+        {/if}
     </div>
 </div>
 <svg style="height:0;width:0;display:block" xmlns="http://www.w3.org/2000/svg">
@@ -300,7 +404,7 @@
         font-size: 1.5em;
         font-weight: 400;
         margin: 0 0 .4em;
-        color: var(--text-color-primary);
+        color: #333;
     }
 
     @media screen and (min-width: 740px) {
@@ -380,6 +484,10 @@
             width: 95%;
             max-width: 1024px;
         }
+    }
+
+    .bd {
+        background-color: #fff;
     }
 
     .account-section-membersince {
@@ -511,24 +619,10 @@
         position: relative;
     }
 
-    .account-subsection ~ .account-subsection {
-        padding-top: 35px;
-        border-top: 1px solid #999;
-    }
 
     @media only screen and (max-width: 500px) {
         .account-subsection ~ .account-subsection.is-external-gift-redemption .account-section-link:first-child {
             border-top: 0;
-        }
-    }
-
-    @media only screen and (min-width: 500px) {
-        .account-subsection ~ .account-subsection {
-            padding-top: 15px;
-        }
-
-        .account-subsection ~ .account-subsection.light-divider {
-            border-color: #e5e5e5;
         }
     }
 
@@ -544,12 +638,6 @@
         .account-section-group + .account-section-group {
             float: right;
             text-align: right;
-        }
-    }
-
-    @media only screen and (min-width: 500px) {
-        .account-section-group + .account-section-group.left-align {
-            text-align: left;
         }
     }
 
@@ -590,7 +678,7 @@
         align-self: center;
         flex-grow: 1;
         padding-left: 20px;
-        color: var(--text-color-primary);
+        color: #787878;
     }
 
     .profile-hub .profile-action-icons {
@@ -602,7 +690,7 @@
     }
 
     .profile-hub .profile-action-icons svg {
-        color: var(--text-color-primary);
+        color: #333;
     }
 
     .profile-hub .profile-links {
@@ -623,13 +711,13 @@
         font-size: 1.2em;
         font-weight: 700;
         margin: 0 0 .3em 0;
-        color: var(--text-color-primary);
+        color: #333;
     }
 
     .profile-hub h4 {
         font-size: 1.2em;
         margin: 4px 0;
-        color: var(--text-color-primary);
+        color: #333;
     }
 
     .profile-hub .profile-link {
@@ -652,7 +740,7 @@
         font-size: .8em;
         align-self: center;
         flex-grow: 1;
-        color: var(--text-color-primary);
+        color: #787878;
     }
 
     .profile-hub .profile-change {
@@ -677,4 +765,217 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
+    .profile-data {
+        margin:15px 0
+    }
+    .profile-icon {
+        vertical-align:middle;
+        margin:0 10px 0 0
+    }
+    .profile-name {
+        vertical-align:middle;
+        white-space:nowrap;
+        overflow:hidden;
+        -o-text-overflow:ellipsis;
+        text-overflow:ellipsis
+    }
+    .profile-email-buttons .nf-btn {
+        margin:10px 0
+    }
+    @media only screen and (min-width:500px) {
+    .profile-email-buttons .nf-btn {
+        margin:0 10px 0 0
+    }
+    }
+
+    ul.structural {
+        padding:0;
+        margin:0
+    }
+
+    ul.structural>li {
+        list-style:none;
+        margin-left:0
+    }
+
+    .nfFormSpace {
+ margin-bottom:10px
+}
+
+.nfInput {
+ max-width:500px;
+ position:relative
+}
+.nfInput .nfInputPlacement {
+ position:relative;
+ border: 1px solid #333;
+}
+.nfInput .nfInputPlacement.showInvalidIcon .nfTextField,
+.nfInput .nfInputPlacement.showValidIcon .nfTextField {
+ padding-right:40px
+}
+
+.nfInput .placeLabel {
+ position:absolute;
+ top:50%;
+ left:10px;
+ color:#8c8c8c;
+ font-size:14px;
+ -webkit-transition:font .1s ease,top .1s ease,-webkit-transform .1s ease;
+ transition:font .1s ease,top .1s ease,-webkit-transform .1s ease;
+ -o-transition:font .1s ease,top .1s ease,-o-transform .1s ease;
+ -moz-transition:font .1s ease,top .1s ease,transform .1s ease,-moz-transform .1s ease;
+ transition:font .1s ease,top .1s ease,transform .1s ease;
+ transition:font .1s ease,top .1s ease,transform .1s ease,-webkit-transform .1s ease,-moz-transform .1s ease,-o-transform .1s ease;
+ -webkit-transform:translateY(-50%);
+ -moz-transform:translateY(-50%);
+ -ms-transform:translateY(-50%);
+ -o-transform:translateY(-50%);
+ transform:translateY(-50%)
+}
+@media only screen and (min-width:740px) {
+ .nfInput .placeLabel {
+  font-size:16px
+ }
+}
+.nfInput .nfTextField {
+ height:48px;
+ padding:10px 10px 0;
+ width:100%
+}
+.nfInput .hasText+.placeLabel,
+.nfInput .nfTextField:focus+.placeLabel {
+ top:4px;
+ font-size:11px;
+ -webkit-transform:translateY(0);
+ -moz-transform:translateY(0);
+ -ms-transform:translateY(0);
+ -o-transform:translateY(0);
+ transform:translateY(0)
+}
+.nfInput .nfTextField:-webkit-autofill+.placeLabel {
+ top:4px;
+ font-size:11px;
+ -webkit-transform:translateY(0);
+ transform:translateY(0)
+}
+
+.profile-email-buttons .nf-btn {
+ margin:10px 0
+}
+@media only screen and (min-width:500px) {
+ .profile-email-buttons .nf-btn {
+  margin:0 10px 0 0
+ }
+}
+.nf-btn {
+ display:inline-block;
+ text-decoration:none;
+ line-height:1rem;
+ vertical-align:middle;
+ cursor:pointer;
+ font-weight:700;
+ letter-spacing:.025rem;
+ -webkit-border-radius:2px;
+ -moz-border-radius:2px;
+ border-radius:2px;
+ -webkit-user-select:none;
+ -moz-user-select:none;
+ -ms-user-select:none;
+ user-select:none;
+ text-align:center;
+ -webkit-box-sizing:border-box;
+ -moz-box-sizing:border-box;
+ box-sizing:border-box;
+ border:none;
+ position:relative;
+ min-height:48px;
+ -webkit-box-shadow:0 1px 1px rgba(0,0,0,.25);
+ -moz-box-shadow:0 1px 1px rgba(0,0,0,.25);
+ box-shadow:0 1px 1px rgba(0,0,0,.25);
+ color:#000
+}
+
+.nf-btn:disabled {
+ cursor:default;
+ opacity:.5;
+ -webkit-box-shadow:none;
+ -moz-box-shadow:none;
+ box-shadow:none
+}
+
+.nf-btn:hover {
+ text-decoration:none;
+ background:#d9d9d9
+}
+
+.nf-btn:active {
+ background:#ccc
+}
+
+.nf-btn-solid.nf-btn-primary {
+ color:#fff;
+ background-color:#e50914
+}
+
+.nf-btn-solid.nf-btn-primary:hover {
+ background-color:#f6121d
+}
+.nf-btn-solid.nf-btn-primary:active {
+ background-color:#e50914
+}
+.nf-btn-solid.nf-btn-primary:disabled {
+ opacity:.5
+}
+
+.nf-btn-solid.nf-btn-secondary {
+ color:#000;
+ background-color:#ccc
+}
+
+.nf-btn-solid.nf-btn-secondary:hover
+{
+ background:#d9d9d9
+}
+.nf-btn-solid.nf-btn-secondary:active
+{
+ background:#ccc
+}
+.nf-btn-solid.nf-btn-secondary:disabled {
+ color:#737373
+}
+
+.nf-btn {
+ position:relative;
+ font-size:1rem;
+ padding:.75rem 1.33333333rem;
+ min-width:74px;
+ min-height:48px;
+ width:100%
+}
+@media only screen and (min-width:500px) {
+ .nf-btn {
+  width:auto
+ }
+}
+.nf-btn.nf-btn-small {
+ display:block;
+ padding:0;
+ line-height:50px
+}
+@media only screen and (min-width:500px) {
+ .nf-btn.nf-btn-small {
+  display:inline-block;
+  font-size:13px;
+  padding:.75rem 17.33333333px;
+  min-width:98px;
+  min-height:37px;
+  margin-right:.5rem;
+  padding-left:1rem;
+  padding-right:1rem;
+  width:auto;
+  line-height:1rem
+ }
+}
 </style>
