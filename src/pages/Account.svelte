@@ -3,8 +3,8 @@
   import { getAccountInfos } from '../api.js';
   import { logged } from '../account.js';
   import * as api from '../api.js';
-  import { getAuthToken, logged, getUserProfiles, deleteCachedProfile } from '../account.js';
-  import { validateEmail, getCookie } from '../utils';
+  import { getAuthToken, logged, getUserProfiles, deleteCachedProfile, addProfileToCache } from '../account.js';
+  import { validateEmail, validateURL, getCookie } from '../utils';
 
   const expanded = [];
   let email = '';
@@ -14,7 +14,18 @@
   let createdMonth = '';
   let createdYear = '';
   let profiles = [];
-  getAccountInfos().then(async (response) => {
+  getUserProfiles().then((prof) => {profiles = [...prof];});
+  let actionOnProfile = -1;
+  let hasTextEmail = true;
+  let hasTextName = false;
+  let hasTextPicture = false;
+  let targetProfileId = -1;
+  let error = "";
+  let success = "";
+  let createProfileName = "";
+  let createProfilePic = "";
+
+  api.getAccountInfos().then(async (response) => {
     if (response.ok) {
       const body = await response.json();
       if ('error' in body) {
@@ -33,12 +44,7 @@
       // TODO
     }
   });
-  getUserProfiles().then((prof) => {profiles = [...prof];});
-  let actionOnProfile = -1;
-  let hasText = true;
-  let targetProfileId = -1;
-  let error = "";
-  let success = "";
+
 
   function changeProfileEmail(profileId, newEmail) {
     if (newEmail != "" && !validateEmail(newEmail)) {
@@ -74,6 +80,7 @@
   }
 
     function deleteProfile(targetProfileId) {
+        error = "";
         api.deleteUserProfile({ authToken: getAuthToken(), profileId: targetProfileId}).then(async (response) => {
             if(response.ok) {
                 const body = await response.json();
@@ -104,6 +111,49 @@
             }
         })
     }
+
+    function createProfile(name, picture) {
+        error = "";
+        if (!validateURL(picture)) {
+            error = "Veuillez saisir une URL valide.";
+            return;
+        }
+        if (name == "") {
+            error = "Le nom ne doit pas être vide.";
+            return;
+        }
+        api.createUserProfile({ authToken: getAuthToken(), profileName: name, profilePicture: picture }).then(async (response) => {
+            if (response.ok) {
+                const body = await response.json();
+                if ('error' in body) {
+                    if (body.error == "InvalidTokenError") {
+                        document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                        logged.set(null);
+                        await push('#/');
+                        return;
+                    } else if (body.error == "InvalidUrlError") {
+                        error = "L'URL spécifiée est incorrecte.";
+                        return;
+                    } else if (body.error == "InvalidNameError") {
+                        error = "Le nom de profil spécifié est incorrecte.";
+                        return;
+                    } else {
+                        error = "Une erreur s'est produite."
+                        return;
+                    }
+                }
+                success = "Le profil a bien été créé";
+                let newProfileId = body.response;
+                addProfileToCache(newProfileId, name, picture);
+                getUserProfiles().then((prof) => {profiles = [...prof];});
+                setTimeout(() => {
+                    actionOnProfile = -1;
+                    success = "";
+                }, 2000);
+            }
+        })
+    }
+
 </script>
 
 <div class="bd">
@@ -316,7 +366,7 @@
                             <div class="nfInput" data-uia="field-email+container">
                                 <div class="nfInputPlacement">
                                     <label class="input_id" placeholder="email">
-                                        <input id="id_email" bind:value={profiles[targetProfileId].email} class="nfTextField hasText" class:hasText on:focus={() => {hasText = true; error = "";}} on:blur={() => {if(document.getElementById('id_email').value === "") {hasText=false;} else {hasText = true;}}} type="text" data-uia="field-email" name="email" tabindex="0" autocomplete="off" maxlength="50" minlength="5" dir="ltr">
+                                        <input id="id_email" bind:value={profiles[targetProfileId].email} class="nfTextField hasText" class:hasText={hasTextEmail} on:focus={() => {hasTextEmail = true; error = "";}} on:blur={() => {if(document.getElementById('id_email').value === "") {hasTextEmail=false;} else {hasTextEmail = true;}}} type="text" data-uia="field-email" name="email" tabindex="0" autocomplete="off" maxlength="50" minlength="5" dir="ltr">
                                         <label class="placeLabel" for="id_email">Adresse e-mail</label> 
                                     </label>
                                 </div>
@@ -343,7 +393,7 @@
                             <div class="nfInput" data-uia="field-email+container">
                                 <div class="nfInputPlacement">
                                     <label class="input_id" placeholder="email">
-                                        <input id="id_email" bind:value={profiles[targetProfileId].email} class="nfTextField" class:hasText on:focus={() => {hasText = true; error = "";}} on:blur={() => {if(document.getElementById('id_email').value === "") {hasText=false;} else {hasText = true;}}} type="text" data-uia="field-email" name="email" tabindex="0" autocomplete="off" maxlength="50" minlength="5" dir="ltr">
+                                        <input id="id_email" bind:value={profiles[targetProfileId].email} class="nfTextField" class:hasText={hasTextEmail} on:focus={() => {hasTextEmail = true; error = "";}} on:blur={() => {if(document.getElementById('id_email').value === "") {hasTextEmail=false;} else {hasTextEmail = true;}}} type="text" data-uia="field-email" name="email" tabindex="0" autocomplete="off" maxlength="50" minlength="5" dir="ltr">
                                         <label class="placeLabel" for="id_email">Adresse e-mail</label>
                                     </label>
                                 </div>
@@ -358,7 +408,41 @@
                     </div>
                 </form>
             {:else if (actionOnProfile == 3)}
-
+                <form class="profile-create-form" data-uia="profile-create-form" method="post" novalidate="">
+                    <h1>Créer un profil</h1>
+                    <div class="profile-data">
+                        <img class="profile-icon" width="150" alt="" src="{createProfilePic}">
+                    </div>
+                    <ul class="simpleForm structural ui-grid">
+                        <li class="nfFormSpace">
+                            <div class="nfInput">
+                                <div class="nfInputPlacement">
+                                    <label class="input_id" placeholder="name">
+                                        <input id="profileName" bind:value={createProfileName} class="nfTextField" class:hasText={hasTextName} on:focus={() => {hasTextName = true; error = "";}} on:blur={() => {if(document.getElementById('profileName').value === "") {hasTextName=false;} else {hasTextName = true;}}} type="text" data-uia="field-name" name="name" tabindex="0" autocomplete="off" maxlength="50" minlength="1" dir="ltr">
+                                        <label class="placeLabel" for="profileName">Nom du profil</label>
+                                    </label>
+                                </div>
+                            </div>
+                        </li>
+                        <br/><br/>
+                        <li class="nfFormSpace">
+                            <div class="nfInput">
+                                <div class="nfInputPlacement">
+                                    <label class="input_id" placeholder="picture">
+                                        <input id="profilePic" bind:value={createProfilePic} class="nfTextField" class:hasText={hasTextPicture} on:focus={() => {hasTextPicture = true; error = "";}} on:blur={() => {if(document.getElementById('profilePic').value === "") {hasTextPicture=false;} else {hasTextPicture = true;}}} type="url" data-uia="field-pic" name="pic" tabindex="0" autocomplete="off" dir="ltr">
+                                        <label class="placeLabel" for="profilePic">URL de l'image</label>
+                                    </label>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <p style="color: red;">{error}</p>
+                    <p style="color: green;">{success}</p>
+                    <div class="nf-btn-bar profile-email-buttons">
+                        <button id="nf-btn-save" class="nf-btn nf-btn-primary nf-btn-solid nf-btn-small" type="button" autocomplete="off" tabindex="0" data-uia="save-profile-email" placeholder="" on:click={() => {createProfile(createProfileName, createProfilePic)}}>ENREGISTRER</button>
+                        <button id="btn-cancel" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button" autocomplete="off" tabindex="0" data-uia="cancel-profile-email" placeholder="" on:click={() => {actionOnProfile = -1; error = ""; success = "";}}>ANNULER</button>
+                    </div>
+                </form>
             {:else if (actionOnProfile == 4)}
                 <h1>Êtes-vous sûr de vouloir supprimer le profil <b>{profiles[targetProfileId].name}</b> ?</h1>
                 <img class="profile-icon" height="50" width="50" style="margin-bottom: 2cm;" alt="{profiles[targetProfileId].name}" src="{profiles[targetProfileId].picture}">

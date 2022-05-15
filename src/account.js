@@ -83,3 +83,10 @@ export function deleteCachedProfile(profileId) {
     delete userProfilesCache[profileId];
   }
 }
+
+export function addProfileToCache(id, name, pic) {
+  userProfilesCache[id] = {};
+  userProfilesCache[id].name = name;
+  userProfilesCache[id].email = '';
+  userProfilesCache[id].picture = pic;
+}
