@@ -77,3 +77,9 @@ export function getCurrentProfile() {
   }
   return userProfilesCache[profile_id];
 }
+
+export function deleteCachedProfile(profileId) {
+  if (userProfilesCache[profileId]) {
+    delete userProfilesCache[profileId];
+  }
+}

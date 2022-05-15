@@ -62,12 +62,25 @@ export async function getAccountInfos() {
 export async function changeProfileEmail(payload) {
   return fetch(`${API_BASE}/me/changeProfileEmail`, {
       method: 'POST',
-      credentials: 'include',
+      //credentials: 'include',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
     },
+  );
+}
+
+export async function deleteUserProfile(payload) {
+  return fetch(`${API_BASE}/me/deleteUserProfile`, {
+    method: 'POST',
+    //credentials: 'include',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  },
   );
 }

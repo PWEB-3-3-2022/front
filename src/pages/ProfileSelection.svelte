@@ -15,13 +15,15 @@
         <h1 class="profile-header">Choisissez votre profil</h1>
         <ul class="profile-list">
             {#each profiles as prof, i}
-                <li class="profile">
-                    <a class="profile-link" href="#/profiles" on:click={() => OnClickProfile(i)}>
-                        <img alt="profile icon" class="profile-icon"
-                            src={prof.picture}/>
-                        <span class="profile-name">{prof.name}</span>
-                    </a>
-                </li>
+                {#if (prof != null)}
+                    <li class="profile">
+                        <a class="profile-link" href="#/profiles" on:click={() => OnClickProfile(i)}>
+                            <img alt="profile icon" class="profile-icon"
+                                src={prof.picture}/>
+                            <span class="profile-name">{prof.name}</span>
+                        </a>
+                    </li>
+                {/if}
             {/each}
         </ul>
     </div>
