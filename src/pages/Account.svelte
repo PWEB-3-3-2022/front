@@ -1,10 +1,9 @@
 <script>
   import { push } from 'svelte-spa-router';
-  import { getAccountInfos } from '../api.js';
-  import { logged } from '../account.js';
+  import { get } from 'svelte/store';
   import * as api from '../api.js';
-  import { getAuthToken, logged, getUserProfiles, deleteCachedProfile, addProfileToCache } from '../account.js';
-  import { validateEmail, validateURL, getCookie } from '../utils';
+  import { currentProfile, logged, reloadAccount } from '../account.js';
+  import { validateEmail, validateURL } from '../utils';
 
   const expanded = [];
   let email = '';
@@ -14,16 +13,15 @@
   let createdMonth = '';
   let createdYear = '';
   let profiles = [];
-  getUserProfiles().then((prof) => {profiles = [...prof];});
   let actionOnProfile = -1;
   let hasTextEmail = true;
   let hasTextName = false;
   let hasTextPicture = false;
   let targetProfileId = -1;
-  let error = "";
-  let success = "";
-  let createProfileName = "";
-  let createProfilePic = "";
+  let error = '';
+  let success = '';
+  let createProfileName = '';
+  let createProfilePic = '';
 
   api.getAccountInfos().then(async (response) => {
     if (response.ok) {
@@ -40,120 +38,118 @@
       createdDate = new Date(parseInt(created, 10));
       createdMonth = new Intl.DateTimeFormat('fr-FR', { month: 'long' }).format(createdDate);
       createdYear = createdDate.getFullYear();
+      profiles = body.profiles;
     } else if (response.status === 500) {
       // TODO
     }
   });
 
-
   function changeProfileEmail(profileId, newEmail) {
-    if (newEmail != "" && !validateEmail(newEmail)) {
-        error = "Veuillez saisir une adresse mail valide.";
-        return;
+    if (newEmail !== '' && !validateEmail(newEmail)) {
+      error = 'Veuillez saisir une adresse mail valide.';
+      return;
     }
-    error = "";
-    api.changeProfileEmail({ authToken: getAuthToken(), profileId, newEmail }).then(async (response) => {
-        if(response.ok) {
-            const body = await response.json();
-            if ('error' in body) {
-                if (body.error == "InvalidTokenError") {
-                    document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                    logged.set(null);
-                    await push('#/');
-                    return;
-                } else if (body.error == "InvalidProfileIdError") {
-                    error = "Le profil sélectionné n'existe pas.";
-                    return;
-                } else if (body.error == "InvalidEmailError") {
-                    error = "Veuillez saisir une adresse mail valide.";
-                    return;
-                }
-            }
-
-            sucess = "La nouvelle adresse mail a bien été définie.";
-            setTimeout(() => {
-                actionOnProfile = -1;
-                success = "";
-            }, 2000);
+    error = '';
+    api.changeProfileEmail(profileId, newEmail).then(async (response) => {
+      if (response.ok) {
+        const body = await response.json();
+        if ('error' in body) {
+          if (body.error === 'InvalidTokenError') {
+            document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            logged.set(null);
+            await push('#/');
+            return;
+          }
+          if (body.error === 'InvalidProfileIdError') {
+            error = 'Le profil sélectionné n\'existe pas.';
+            return;
+          }
+          if (body.error === 'InvalidEmailError') {
+            error = 'Veuillez saisir une adresse mail valide.';
+            return;
+          }
         }
+
+        success = 'La nouvelle adresse mail a bien été définie.';
+        setTimeout(() => {
+          actionOnProfile = -1;
+          success = '';
+        }, 2000);
+      }
     });
   }
 
-    function deleteProfile(targetProfileId) {
-        error = "";
-        api.deleteUserProfile({ authToken: getAuthToken(), profileId: targetProfileId}).then(async (response) => {
-            if(response.ok) {
-                const body = await response.json();
-                if ('error' in body) {
-                    if (body.error == "InvalidTokenError") {
-                        document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                        logged.set(null);
-                        await push('#/');
-                        return;
-                    } else if (body.error == "InvalidProfileIdError") {
-                        error = "Le profil sélectionné n'existe pas.";
-                        return;
-                    } else {
-                        error = "Une erreur s'est produite."
-                        return;
-                    }
-                }
-                success = "Le profil a bien été supprimé.";
-                deleteCachedProfile(targetProfileId);
-                delete profiles[targetProfileId];
-                setTimeout(() => {
-                    actionOnProfile = -1;
-                    success = "";
-                    if (getCookie('profile') == targetProfileId) {
-                        push('#/profile');
-                    }
-                }, 2000);
-            }
-        })
-    }
-
-    function createProfile(name, picture) {
-        error = "";
-        if (!validateURL(picture)) {
-            error = "Veuillez saisir une URL valide.";
+  function deleteProfile(profileId) {
+    error = '';
+    api.deleteUserProfile(profileId).then(async (response) => {
+      if (response.ok) {
+        const body = await response.json();
+        if ('error' in body) {
+          if (body.error === 'InvalidTokenError') {
+            document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            logged.set(null);
+            await push('#/');
             return;
-        }
-        if (name == "") {
-            error = "Le nom ne doit pas être vide.";
+          }
+          if (body.error === 'InvalidProfileIdError') {
+            error = 'Le profil sélectionné n\'existe pas.';
             return;
+          }
+          error = 'Une erreur s\'est produite.';
+          return;
         }
-        api.createUserProfile({ authToken: getAuthToken(), profileName: name, profilePicture: picture }).then(async (response) => {
-            if (response.ok) {
-                const body = await response.json();
-                if ('error' in body) {
-                    if (body.error == "InvalidTokenError") {
-                        document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                        logged.set(null);
-                        await push('#/');
-                        return;
-                    } else if (body.error == "InvalidUrlError") {
-                        error = "L'URL spécifiée est incorrecte.";
-                        return;
-                    } else if (body.error == "InvalidNameError") {
-                        error = "Le nom de profil spécifié est incorrecte.";
-                        return;
-                    } else {
-                        error = "Une erreur s'est produite."
-                        return;
-                    }
-                }
-                success = "Le profil a bien été créé";
-                let newProfileId = body.response;
-                addProfileToCache(newProfileId, name, picture);
-                getUserProfiles().then((prof) => {profiles = [...prof];});
-                setTimeout(() => {
-                    actionOnProfile = -1;
-                    success = "";
-                }, 2000);
-            }
-        })
-    }
+        success = 'Le profil a bien été supprimé.';
+        delete profiles[profileId];
+        setTimeout(() => {
+          actionOnProfile = -1;
+          success = '';
+          if (get(currentProfile) === profileId) {
+            push('#/profile');
+          }
+        }, 2000);
+      }
+    });
+  }
 
+  function createProfile(name, picture) {
+    error = '';
+    if (!validateURL(picture)) {
+      error = 'Veuillez saisir une URL valide.';
+      return;
+    }
+    if (name === '') {
+      error = 'Le nom ne doit pas être vide.';
+      return;
+    }
+    api.createUserProfile({ profileName: name, profilePicture: picture })
+      .then(async (response) => {
+        if (response.ok) {
+          const body = await response.json();
+          if ('error' in body) {
+            if (body.error === 'InvalidTokenError') {
+              document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+              logged.set(null);
+              await push('#/');
+              return;
+            }
+            if (body.error === 'InvalidUrlError') {
+              error = 'L\'URL spécifiée est incorrecte.';
+              return;
+            }
+            if (body.error === 'InvalidNameError') {
+              error = 'Le nom de profil spécifié est incorrecte.';
+              return;
+            }
+            error = 'Une erreur s\'est produite.';
+            return;
+          }
+          success = 'Le profil a bien été créé';
+          await reloadAccount();
+          actionOnProfile = -1;
+          success = '';
+        }
+      });
+  }
 </script>
 
 <div class="bd">
@@ -169,7 +165,7 @@
                 <div class="account-messages-container"></div>
                 <div class="responsive-account-content" data-uia="account-content">
                     <div class="account-section collapsable-panel clearfix membership-section-wrapper"
-                        data-uia="membership-section">
+                         data-uia="membership-section">
                         <header class="account-section-header collapsable-section-toggle">
                             <h2 class="account-section-heading">Informations</h2>
                         </header>
@@ -178,26 +174,26 @@
                                 <div class="clearfix">
                                     <div class="account-section-group">
                                         <div class="account-section-item account-section-email"
-                                            data-uia="account-email">{email}</div>
+                                             data-uia="account-email">{email}</div>
                                         <div class="account-section-item account-section-item-disabled"
-                                            data-uia="account-password">
+                                             data-uia="account-password">
                                             Mot de passe : ********
                                         </div>
                                         <div class="account-section-item account-section-item-disabled"
-                                            data-uia="account-phone"></div>
+                                             data-uia="account-phone"></div>
                                     </div>
                                     <div class="account-section-group">
                                         <div class="account-section-item"><a class="account-section-link"
-                                                                            data-uia="account-email-link"
-                                                                            href="#/">Modifier l&#x27;adresse
+                                                                             data-uia="account-email-link"
+                                                                             href="#/">Modifier l&#x27;adresse
                                             e-mail du compte</a></div>
                                         <div class="account-section-item"><a class="account-section-link"
-                                                                            data-uia="account-password-link"
-                                                                            href="#/">Modifier le mot de
+                                                                             data-uia="account-password-link"
+                                                                             href="#/">Modifier le mot de
                                             passe</a></div>
                                         <div class="account-section-item"><a class="account-section-link"
-                                                                            data-uia="account-phone-link"
-                                                                            href="#/">Ajouter un
+                                                                             data-uia="account-phone-link"
+                                                                             href="#/">Ajouter un
                                             numéro de téléphone</a></div>
                                     </div>
                                 </div>
@@ -220,8 +216,8 @@
                                                     on:click="{() => { expanded[i] = !expanded[i]; }}">
                                                     <div aria-expanded="false" class="profile-header">
                                                         <img alt="${prof.name}"
-                                                            class="activeProfile"
-                                                            src={prof.picture}/>
+                                                             class="activeProfile"
+                                                             src={prof.picture}/>
                                                         <div class="profile-summary">
                                                             <h3>{prof.name}</h3>
                                                             <div>Tous les âges</div>
@@ -229,35 +225,41 @@
                                                         <button aria-controls="profile_{i}"
                                                                 aria-label="Étendre ce profil"
                                                                 class="profile-action-icons">
-                                                            <svg class="svg-icon svg-icon-chevron-down" fill="none" height="24"
-                                                                viewBox="0 0 24 24"
-                                                                width="24"
-                                                                xmlns="http://www.w3.org/2000/svg">
+                                                            <svg class="svg-icon svg-icon-chevron-down" fill="none"
+                                                                 height="24"
+                                                                 viewBox="0 0 24 24"
+                                                                 width="24"
+                                                                 xmlns="http://www.w3.org/2000/svg">
                                                                 <path clip-rule="evenodd"
-                                                                    d="M19.293 7.29297L12.0001 14.5859L4.70718 7.29297L3.29297 8.70718L11.293 16.7072C11.4805 16.8947 11.7349 17.0001 12.0001 17.0001C12.2653 17.0001 12.5196 16.8947 12.7072 16.7072L20.7072 8.70718L19.293 7.29297Z"
-                                                                    fill="currentColor"
-                                                                    fill-rule="evenodd"></path>
+                                                                      d="M19.293 7.29297L12.0001 14.5859L4.70718 7.29297L3.29297 8.70718L11.293 16.7072C11.4805 16.8947 11.7349 17.0001 12.0001 17.0001C12.2653 17.0001 12.5196 16.8947 12.7072 16.7072L20.7072 8.70718L19.293 7.29297Z"
+                                                                      fill="currentColor"
+                                                                      fill-rule="evenodd"></path>
                                                             </svg>
                                                         </button>
                                                     </div>
                                                     <ul class="profile-links">
-                                                        {#if i != 0}
+                                                        {#if i !== 0}
                                                             <li class="account-section-item">
                                                                 <a class="profile-link"
-                                                                data-uia="action-{prof.email != "" ? "change" : "add"}-profile-email"
-                                                                href="#/Account" on:click={() => {actionOnProfile = prof.email == "" ? 1 : 2; targetProfileId = i;}}>
+                                                                   data-uia="action-{prof.email !== '' ? 'change' : 'add'}-profile-email"
+                                                                   href="#/Account"
+                                                                   on:click={() => { actionOnProfile = prof.email === '' ? 1 : 2; targetProfileId = i; }}>
+
+
                                                                     <div class="profile-main">
                                                                         <h4>Adresse e-mail du profil</h4>
-                                                                        {prof.email != "" ? prof.email : ""}
+                                                                        {prof.email !== '' ? prof.email : ''}
                                                                     </div>
-                                                                    <div class="profile-change">{prof.email != "" ? "Modifier" : "Ajouter"}</div>
+                                                                    <div class="profile-change">{prof.email !== ''
+                                                                        ? 'Modifier'
+                                                                        : 'Ajouter'}</div>
                                                                 </a>
                                                             </li>
                                                         {/if}
                                                         <li class="account-section-item">
                                                             <a class="profile-link"
-                                                            data-uia="action-language-preferences"
-                                                            href="/settings/language/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
+                                                               data-uia="action-language-preferences"
+                                                               href="/settings/language/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
                                                                 <div class="profile-main">
                                                                     <h4>Langue</h4>
                                                                     français
@@ -267,8 +269,8 @@
                                                         </li>
                                                         <li class="account-section-item">
                                                             <a class="profile-link"
-                                                            data-uia="action-content-restrictions"
-                                                            href="/settings/restrictions/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
+                                                               data-uia="action-content-restrictions"
+                                                               href="/settings/restrictions/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
                                                                 <div class="profile-main">
                                                                     <h4>Restrictions d&#x27;accès</h4>
                                                                     <div>Pas de limitation d'accès.</div>
@@ -278,8 +280,8 @@
                                                         </li>
                                                         <li class="account-section-item">
                                                             <a class="profile-link"
-                                                            data-uia="action-profile-lock"
-                                                            href="/settings/lock/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
+                                                               data-uia="action-profile-lock"
+                                                               href="/settings/lock/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
                                                                 <div class="profile-main">
                                                                     <h4>Verrouillage des profils</h4>
                                                                     Désactivé
@@ -289,8 +291,8 @@
                                                         </li>
                                                         <li class="account-section-item">
                                                             <a class="profile-link"
-                                                            data-uia="action-viewing-activity"
-                                                            href="/settings/viewed/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
+                                                               data-uia="action-viewing-activity"
+                                                               href="/settings/viewed/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
                                                                 <div class="profile-main">
                                                                     <h4>Historique</h4>
                                                                 </div>
@@ -299,8 +301,8 @@
                                                         </li>
                                                         <li class="account-section-item">
                                                             <a class="profile-link"
-                                                            data-uia="action-rating-activity"
-                                                            href="/settings/rated/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
+                                                               data-uia="action-rating-activity"
+                                                               href="/settings/rated/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
                                                                 <div class="profile-main">
                                                                     <h4>Évaluations</h4>
                                                                 </div>
@@ -309,8 +311,8 @@
                                                         </li>
                                                         <li class="account-section-item">
                                                             <a class="profile-link"
-                                                            data-uia="action-subtitle-preferences"
-                                                            href="/settings/subtitles/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
+                                                               data-uia="action-subtitle-preferences"
+                                                               href="/settings/subtitles/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
                                                                 <div class="profile-main">
                                                                     <h4>Affichage des sous-titres</h4>
                                                                 </div>
@@ -319,8 +321,8 @@
                                                         </li>
                                                         <li class="account-section-item">
                                                             <a class="profile-link"
-                                                            data-uia="action-video-quality"
-                                                            href="/settings/playback/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
+                                                               data-uia="action-video-quality"
+                                                               href="/settings/playback/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
                                                                 <div class="profile-main">
                                                                     <h4>Paramètres de lecture</h4>
                                                                     Lecture automatique de l&#x27;épisode suivant.
@@ -330,11 +332,12 @@
                                                                 <div class="profile-change">Modifier</div>
                                                             </a>
                                                         </li>
-                                                        {#if i != 0}
+                                                        {#if i !== 0}
                                                             <li class="account-section-item">
                                                                 <a class="profile-link"
-                                                                data-uia="action-video-quality"
-                                                                href="#/Account" on:click={() => {actionOnProfile = 4; targetProfileId = i;}}>
+                                                                   data-uia="action-video-quality"
+                                                                   href="#/Account"
+                                                                   on:click={() => { actionOnProfile = 4; targetProfileId = i; }}>
                                                                     <div class="profile-main">
                                                                         <h4 style="color: red;">Supprimer profil</h4>
                                                                     </div>
@@ -347,53 +350,34 @@
                                         {/each}
                                     </ul>
                                 </div>
-                                <a href="#/Account" on:click={() => actionOnProfile = 3} class="create-profile-btn">Créer profil</a>
+                                <a href="#/Account" on:click={() => { actionOnProfile = 3; }}
+                                   class="create-profile-btn">Créer
+                                    profil</a>
                             </div>
                         </section>
                     </div>
                 </div>
             </div>
         {:else}
-            {#if (actionOnProfile == 2)}
+            {#if actionOnProfile === 2}
                 <form class="profile-email-form" data-uia="profile-email-form" method="post" novalidate="">
                     <h1>Modifier l'adresse e-mail du profil</h1>
                     <div class="profile-data">
-                        <img class="profile-icon" height="32" width="32" alt="{profiles[targetProfileId].name}" src="{profiles[targetProfileId].picture}">
-                        <span id="" class="profile-name" data-uia="profile-name">{profiles[targetProfileId].name}</span>
+                        <img class="profile-icon" height="32" width="32" alt="{profiles[targetProfileId].name}"
+                             src="{profiles[targetProfileId].picture}">
+                        <span class="profile-name" data-uia="profile-name">{profiles[targetProfileId].name}</span>
                     </div>
                     <ul class="simpleForm structural ui-grid">
                         <li class="nfFormSpace" data-uia="field-email+wrapper">
                             <div class="nfInput" data-uia="field-email+container">
                                 <div class="nfInputPlacement">
                                     <label class="input_id" placeholder="email">
-                                        <input id="id_email" bind:value={profiles[targetProfileId].email} class="nfTextField hasText" class:hasText={hasTextEmail} on:focus={() => {hasTextEmail = true; error = "";}} on:blur={() => {if(document.getElementById('id_email').value === "") {hasTextEmail=false;} else {hasTextEmail = true;}}} type="text" data-uia="field-email" name="email" tabindex="0" autocomplete="off" maxlength="50" minlength="5" dir="ltr">
-                                        <label class="placeLabel" for="id_email">Adresse e-mail</label> 
-                                    </label>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                    <p style="color: red;">{error}</p>
-                    <p style="color: green;">{success}</p>
-                    <div class="nf-btn-bar profile-email-buttons">
-                        <button id="nf-btn-save" class="nf-btn nf-btn-primary nf-btn-solid nf-btn-small" type="button" autocomplete="off" tabindex="0" data-uia="save-profile-email" placeholder="" on:click={() => {changeProfileEmail(targetProfileId, profiles[targetProfileId].email)}}>ENREGISTRER</button>
-                        <button id="btn-delete" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button" autocomplete="off" tabindex="0" data-uia="delete-profile-email" placeholder="" on:click={() => {changeProfileEmail(targetProfileId, ''); profiles[targetProfileId].email = "";}}>SUPPRIMER L'ADRESSE E-MAIL</button>
-                        <button id="btn-cancel" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button" autocomplete="off" tabindex="0" data-uia="cancel-profile-email" placeholder="" on:click={() => {actionOnProfile = -1; error = ""; success = "";}}>ANNULER</button>
-                    </div>
-                </form>
-            {:else if (actionOnProfile == 1)}
-                <form class="profile-email-form" data-uia="profile-email-form" method="post" novalidate="">
-                    <h1>Ajouter une adresse e-mail au profil</h1>
-                    <div class="profile-data">
-                        <img class="profile-icon" height="32" width="32" alt="{profiles[targetProfileId].name}" src="{profiles[targetProfileId].picture}">
-                        <span id="" class="profile-name" data-uia="profile-name">{profiles[targetProfileId].name}</span>
-                    </div>
-                    <ul class="simpleForm structural ui-grid">
-                        <li class="nfFormSpace" data-uia="field-email+wrapper">
-                            <div class="nfInput" data-uia="field-email+container">
-                                <div class="nfInputPlacement">
-                                    <label class="input_id" placeholder="email">
-                                        <input id="id_email" bind:value={profiles[targetProfileId].email} class="nfTextField" class:hasText={hasTextEmail} on:focus={() => {hasTextEmail = true; error = "";}} on:blur={() => {if(document.getElementById('id_email').value === "") {hasTextEmail=false;} else {hasTextEmail = true;}}} type="text" data-uia="field-email" name="email" tabindex="0" autocomplete="off" maxlength="50" minlength="5" dir="ltr">
+                                        <input id="id_email" bind:value={profiles[targetProfileId].email}
+                                               class="nfTextField hasText" class:hasText={hasTextEmail}
+                                               on:focus={() => { hasTextEmail = true; error = ''; }}
+                                               on:blur={() => { if (document.getElementById('id_email').value === '') { hasTextEmail = false; } else { hasTextEmail = true; } }}
+                                               type="text" data-uia="field-email" name="email" tabindex="0"
+                                               autocomplete="off" maxlength="50" minlength="5" dir="ltr">
                                         <label class="placeLabel" for="id_email">Adresse e-mail</label>
                                     </label>
                                 </div>
@@ -403,8 +387,59 @@
                     <p style="color: red;">{error}</p>
                     <p style="color: green;">{success}</p>
                     <div class="nf-btn-bar profile-email-buttons">
-                        <button id="nf-btn-save" class="nf-btn nf-btn-primary nf-btn-solid nf-btn-small" type="button" autocomplete="off" tabindex="0" data-uia="save-profile-email" placeholder="" on:click={() => {changeProfileEmail(targetProfileId, profiles[targetProfileId].email)}}>ENREGISTRER</button>
-                        <button id="btn-cancel" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button" autocomplete="off" tabindex="0" data-uia="cancel-profile-email" placeholder="" on:click={() => {actionOnProfile = -1; error = ""; success = "";}}>ANNULER</button>
+                        <button id="nf-btn-save" class="nf-btn nf-btn-primary nf-btn-solid nf-btn-small" type="button"
+                                autocomplete="off" tabindex="0" data-uia="save-profile-email" placeholder=""
+                                on:click={() => { changeProfileEmail(targetProfileId, profiles[targetProfileId].email); }}>
+                            ENREGISTRER
+                        </button>
+                        <button id="btn-delete" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button"
+                                autocomplete="off" tabindex="0" data-uia="delete-profile-email" placeholder=""
+                                on:click={() => { changeProfileEmail(targetProfileId, ''); profiles[targetProfileId].email = ''; }}>
+                            SUPPRIMER L'ADRESSE E-MAIL
+                        </button>
+                        <button id="btn-cancel" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button"
+                                autocomplete="off" tabindex="0" data-uia="cancel-profile-email" placeholder=""
+                                on:click={() => { actionOnProfile = -1; error = ''; success = ''; }}>ANNULER
+                        </button>
+                    </div>
+                </form>
+            {:else if (actionOnProfile === 1)}
+                <form class="profile-email-form" data-uia="profile-email-form" method="post" novalidate="">
+                    <h1>Ajouter une adresse e-mail au profil</h1>
+                    <div class="profile-data">
+                        <img class="profile-icon" height="32" width="32" alt="{profiles[targetProfileId].name}"
+                             src="{profiles[targetProfileId].picture}">
+                        <span id="" class="profile-name" data-uia="profile-name">{profiles[targetProfileId].name}</span>
+                    </div>
+                    <ul class="simpleForm structural ui-grid">
+                        <li class="nfFormSpace" data-uia="field-email+wrapper">
+                            <div class="nfInput" data-uia="field-email+container">
+                                <div class="nfInputPlacement">
+                                    <label class="input_id" placeholder="email">
+                                        <input id="id_email" bind:value={profiles[targetProfileId].email}
+                                               class="nfTextField" class:hasText={hasTextEmail}
+                                               on:focus={() => { hasTextEmail = true; error = ''; }}
+                                               on:blur={() => { if (document.getElementById('id_email').value === '') { hasTextEmail = false; } else { hasTextEmail = true; } }}
+                                               type="text" data-uia="field-email" name="email" tabindex="0"
+                                               autocomplete="off" maxlength="50" minlength="5" dir="ltr">
+                                        <label class="placeLabel" for="id_email">Adresse e-mail</label>
+                                    </label>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <p style="color: red;">{error}</p>
+                    <p style="color: green;">{success}</p>
+                    <div class="nf-btn-bar profile-email-buttons">
+                        <button id="nf-btn-save" class="nf-btn nf-btn-primary nf-btn-solid nf-btn-small" type="button"
+                                autocomplete="off" tabindex="0" data-uia="save-profile-email" placeholder=""
+                                on:click={() => { changeProfileEmail(targetProfileId, profiles[targetProfileId].email); }}>
+                            ENREGISTRER
+                        </button>
+                        <button id="btn-cancel" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button"
+                                autocomplete="off" tabindex="0" data-uia="cancel-profile-email" placeholder=""
+                                on:click={() => { actionOnProfile = -1; error = ''; success = ''; }}>ANNULER
+                        </button>
                     </div>
                 </form>
             {:else if (actionOnProfile == 3)}
@@ -418,7 +453,12 @@
                             <div class="nfInput">
                                 <div class="nfInputPlacement">
                                     <label class="input_id" placeholder="name">
-                                        <input id="profileName" bind:value={createProfileName} class="nfTextField" class:hasText={hasTextName} on:focus={() => {hasTextName = true; error = "";}} on:blur={() => {if(document.getElementById('profileName').value === "") {hasTextName=false;} else {hasTextName = true;}}} type="text" data-uia="field-name" name="name" tabindex="0" autocomplete="off" maxlength="50" minlength="1" dir="ltr">
+                                        <input id="profileName" bind:value={createProfileName} class="nfTextField"
+                                               class:hasText={hasTextName}
+                                               on:focus={() => { hasTextName = true; error = ''; }}
+                                               on:blur={() => { if (document.getElementById('profileName').value === '') { hasTextName = false; } else { hasTextName = true; } }}
+                                               type="text" data-uia="field-name" name="name" tabindex="0"
+                                               autocomplete="off" maxlength="50" minlength="1" dir="ltr">
                                         <label class="placeLabel" for="profileName">Nom du profil</label>
                                     </label>
                                 </div>
@@ -429,7 +469,12 @@
                             <div class="nfInput">
                                 <div class="nfInputPlacement">
                                     <label class="input_id" placeholder="picture">
-                                        <input id="profilePic" bind:value={createProfilePic} class="nfTextField" class:hasText={hasTextPicture} on:focus={() => {hasTextPicture = true; error = "";}} on:blur={() => {if(document.getElementById('profilePic').value === "") {hasTextPicture=false;} else {hasTextPicture = true;}}} type="url" data-uia="field-pic" name="pic" tabindex="0" autocomplete="off" dir="ltr">
+                                        <input id="profilePic" bind:value={createProfilePic} class="nfTextField"
+                                               class:hasText={hasTextPicture}
+                                               on:focus={() => { hasTextPicture = true; error = ''; }}
+                                               on:blur={() => { if (document.getElementById('profilePic').value === '') { hasTextPicture = false; } else { hasTextPicture = true; } }}
+                                               type="url" data-uia="field-pic" name="pic" tabindex="0"
+                                               autocomplete="off" dir="ltr">
                                         <label class="placeLabel" for="profilePic">URL de l'image</label>
                                     </label>
                                 </div>
@@ -439,18 +484,31 @@
                     <p style="color: red;">{error}</p>
                     <p style="color: green;">{success}</p>
                     <div class="nf-btn-bar profile-email-buttons">
-                        <button id="nf-btn-save" class="nf-btn nf-btn-primary nf-btn-solid nf-btn-small" type="button" autocomplete="off" tabindex="0" data-uia="save-profile-email" placeholder="" on:click={() => {createProfile(createProfileName, createProfilePic)}}>ENREGISTRER</button>
-                        <button id="btn-cancel" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button" autocomplete="off" tabindex="0" data-uia="cancel-profile-email" placeholder="" on:click={() => {actionOnProfile = -1; error = ""; success = "";}}>ANNULER</button>
+                        <button id="nf-btn-save" class="nf-btn nf-btn-primary nf-btn-solid nf-btn-small" type="button"
+                                autocomplete="off" tabindex="0" data-uia="save-profile-email" placeholder=""
+                                on:click={() => { createProfile(createProfileName, createProfilePic); }}>ENREGISTRER
+                        </button>
+                        <button id="btn-cancel" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button"
+                                autocomplete="off" tabindex="0" data-uia="cancel-profile-email" placeholder=""
+                                on:click={() => { actionOnProfile = -1; error = ''; success = ''; }}>ANNULER
+                        </button>
                     </div>
                 </form>
-            {:else if (actionOnProfile == 4)}
+            {:else if actionOnProfile === 4}
                 <h1>Êtes-vous sûr de vouloir supprimer le profil <b>{profiles[targetProfileId].name}</b> ?</h1>
-                <img class="profile-icon" height="50" width="50" style="margin-bottom: 2cm;" alt="{profiles[targetProfileId].name}" src="{profiles[targetProfileId].picture}">
+                <img class="profile-icon" height="50" width="50" style="margin-bottom: 2cm;"
+                     alt="{profiles[targetProfileId].name}" src="{profiles[targetProfileId].picture}">
                 <p style="color: red;">{error}</p>
                 <p style="color: green;">{success}</p>
                 <div class="nf-btn-bar profile-email-buttons">
-                    <button id="nf-btn-save" class="nf-btn nf-btn-primary nf-btn-solid nf-btn-small" type="button" autocomplete="off" tabindex="0" data-uia="save-profile-email" placeholder="" on:click={() => {deleteProfile(targetProfileId);}}>OUI</button>
-                    <button id="btn-cancel" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button" autocomplete="off" tabindex="0" placeholder="" on:click={() => {actionOnProfile = -1;}}>NON</button>
+                    <button id="nf-btn-save" class="nf-btn nf-btn-primary nf-btn-solid nf-btn-small" type="button"
+                            autocomplete="off" tabindex="0" data-uia="save-profile-email" placeholder=""
+                            on:click={() => { deleteProfile(targetProfileId); }}>OUI
+                    </button>
+                    <button id="btn-cancel" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button"
+                            autocomplete="off" tabindex="0" placeholder="" on:click={() => { actionOnProfile = -1; }}>
+                        NON
+                    </button>
                 </div>
             {/if}
         {/if}
@@ -909,243 +967,262 @@
     }
 
     .profile-data {
-        margin:15px 0
+        margin: 15px 0
     }
+
     .profile-icon {
-        vertical-align:middle;
-        margin:0 10px 0 0
+        vertical-align: middle;
+        margin: 0 10px 0 0
     }
+
     .profile-name {
-        vertical-align:middle;
-        white-space:nowrap;
-        overflow:hidden;
-        -o-text-overflow:ellipsis;
-        text-overflow:ellipsis
+        vertical-align: middle;
+        white-space: nowrap;
+        overflow: hidden;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis
     }
+
     .profile-email-buttons .nf-btn {
-        margin:10px 0
+        margin: 10px 0
     }
-    @media only screen and (min-width:500px) {
-    .profile-email-buttons .nf-btn {
-        margin:0 10px 0 0
-    }
+
+    @media only screen and (min-width: 500px) {
+        .profile-email-buttons .nf-btn {
+            margin: 0 10px 0 0
+        }
     }
 
     ul.structural {
-        padding:0;
-        margin:0
+        padding: 0;
+        margin: 0
     }
 
-    ul.structural>li {
-        list-style:none;
-        margin-left:0
+    ul.structural > li {
+        list-style: none;
+        margin-left: 0
     }
 
     .nfFormSpace {
- margin-bottom:10px
-}
+        margin-bottom: 10px
+    }
 
-.nfInput {
- max-width:500px;
- position:relative
-}
-.nfInput .nfInputPlacement {
- position:relative;
- border: 1px solid #333;
-}
-.nfInput .nfInputPlacement.showInvalidIcon .nfTextField,
-.nfInput .nfInputPlacement.showValidIcon .nfTextField {
- padding-right:40px
-}
+    .nfInput {
+        max-width: 500px;
+        position: relative
+    }
 
-.nfInput .placeLabel {
- position:absolute;
- top:50%;
- left:10px;
- color:#8c8c8c;
- font-size:14px;
- -webkit-transition:font .1s ease,top .1s ease,-webkit-transform .1s ease;
- transition:font .1s ease,top .1s ease,-webkit-transform .1s ease;
- -o-transition:font .1s ease,top .1s ease,-o-transform .1s ease;
- -moz-transition:font .1s ease,top .1s ease,transform .1s ease,-moz-transform .1s ease;
- transition:font .1s ease,top .1s ease,transform .1s ease;
- transition:font .1s ease,top .1s ease,transform .1s ease,-webkit-transform .1s ease,-moz-transform .1s ease,-o-transform .1s ease;
- -webkit-transform:translateY(-50%);
- -moz-transform:translateY(-50%);
- -ms-transform:translateY(-50%);
- -o-transform:translateY(-50%);
- transform:translateY(-50%)
-}
-@media only screen and (min-width:740px) {
- .nfInput .placeLabel {
-  font-size:16px
- }
-}
-.nfInput .nfTextField {
- height:48px;
- padding:10px 10px 0;
- width:100%
-}
-.nfInput .hasText+.placeLabel,
-.nfInput .nfTextField:focus+.placeLabel {
- top:4px;
- font-size:11px;
- -webkit-transform:translateY(0);
- -moz-transform:translateY(0);
- -ms-transform:translateY(0);
- -o-transform:translateY(0);
- transform:translateY(0)
-}
-.nfInput .nfTextField:-webkit-autofill+.placeLabel {
- top:4px;
- font-size:11px;
- -webkit-transform:translateY(0);
- transform:translateY(0)
-}
+    .nfInput .nfInputPlacement {
+        position: relative;
+        border: 1px solid #333;
+    }
 
-.profile-email-buttons .nf-btn {
- margin:10px 0
-}
-@media only screen and (min-width:500px) {
- .profile-email-buttons .nf-btn {
-  margin:0 10px 0 0
- }
-}
-.nf-btn {
- display:inline-block;
- text-decoration:none;
- line-height:1rem;
- vertical-align:middle;
- cursor:pointer;
- font-weight:700;
- letter-spacing:.025rem;
- -webkit-border-radius:2px;
- -moz-border-radius:2px;
- border-radius:2px;
- -webkit-user-select:none;
- -moz-user-select:none;
- -ms-user-select:none;
- user-select:none;
- text-align:center;
- -webkit-box-sizing:border-box;
- -moz-box-sizing:border-box;
- box-sizing:border-box;
- border:none;
- position:relative;
- min-height:48px;
- -webkit-box-shadow:0 1px 1px rgba(0,0,0,.25);
- -moz-box-shadow:0 1px 1px rgba(0,0,0,.25);
- box-shadow:0 1px 1px rgba(0,0,0,.25);
- color:#000
-}
+    .nfInput .nfInputPlacement.showInvalidIcon .nfTextField,
+    .nfInput .nfInputPlacement.showValidIcon .nfTextField {
+        padding-right: 40px
+    }
 
-.nf-btn:disabled {
- cursor:default;
- opacity:.5;
- -webkit-box-shadow:none;
- -moz-box-shadow:none;
- box-shadow:none
-}
+    .nfInput .placeLabel {
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        color: #8c8c8c;
+        font-size: 14px;
+        -webkit-transition: font .1s ease, top .1s ease, -webkit-transform .1s ease;
+        transition: font .1s ease, top .1s ease, -webkit-transform .1s ease;
+        -o-transition: font .1s ease, top .1s ease, -o-transform .1s ease;
+        -moz-transition: font .1s ease, top .1s ease, transform .1s ease, -moz-transform .1s ease;
+        transition: font .1s ease, top .1s ease, transform .1s ease;
+        transition: font .1s ease, top .1s ease, transform .1s ease, -webkit-transform .1s ease, -moz-transform .1s ease, -o-transform .1s ease;
+        -webkit-transform: translateY(-50%);
+        -moz-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        -o-transform: translateY(-50%);
+        transform: translateY(-50%)
+    }
 
-.nf-btn:hover {
- text-decoration:none;
- background:#d9d9d9
-}
+    @media only screen and (min-width: 740px) {
+        .nfInput .placeLabel {
+            font-size: 16px
+        }
+    }
 
-.nf-btn:active {
- background:#ccc
-}
+    .nfInput .nfTextField {
+        height: 48px;
+        padding: 10px 10px 0;
+        width: 100%
+    }
 
-.nf-btn-solid.nf-btn-primary {
- color:#fff;
- background-color:#e50914
-}
+    .nfInput .hasText + .placeLabel,
+    .nfInput .nfTextField:focus + .placeLabel {
+        top: 4px;
+        font-size: 11px;
+        -webkit-transform: translateY(0);
+        -moz-transform: translateY(0);
+        -ms-transform: translateY(0);
+        -o-transform: translateY(0);
+        transform: translateY(0)
+    }
 
-.nf-btn-solid.nf-btn-primary:hover {
- background-color:#f6121d
-}
-.nf-btn-solid.nf-btn-primary:active {
- background-color:#e50914
-}
-.nf-btn-solid.nf-btn-primary:disabled {
- opacity:.5
-}
+    .nfInput .nfTextField:-webkit-autofill + .placeLabel {
+        top: 4px;
+        font-size: 11px;
+        -webkit-transform: translateY(0);
+        transform: translateY(0)
+    }
 
-.nf-btn-solid.nf-btn-secondary {
- color:#000;
- background-color:#ccc
-}
+    .profile-email-buttons .nf-btn {
+        margin: 10px 0
+    }
 
-.nf-btn-solid.nf-btn-secondary:hover
-{
- background:#d9d9d9
-}
-.nf-btn-solid.nf-btn-secondary:active
-{
- background:#ccc
-}
-.nf-btn-solid.nf-btn-secondary:disabled {
- color:#737373
-}
+    @media only screen and (min-width: 500px) {
+        .profile-email-buttons .nf-btn {
+            margin: 0 10px 0 0
+        }
+    }
 
-.nf-btn {
- position:relative;
- font-size:1rem;
- padding:.75rem 1.33333333rem;
- min-width:74px;
- min-height:48px;
- width:100%
-}
-@media only screen and (min-width:500px) {
- .nf-btn {
-  width:auto
- }
-}
-.nf-btn.nf-btn-small {
- display:block;
- padding:0;
- line-height:50px
-}
-@media only screen and (min-width:500px) {
- .nf-btn.nf-btn-small {
-  display:inline-block;
-  font-size:13px;
-  padding:.75rem 17.33333333px;
-  min-width:98px;
-  min-height:37px;
-  margin-right:.5rem;
-  padding-left:1rem;
-  padding-right:1rem;
-  width:auto;
-  line-height:1rem
- }
-}
+    .nf-btn {
+        display: inline-block;
+        text-decoration: none;
+        line-height: 1rem;
+        vertical-align: middle;
+        cursor: pointer;
+        font-weight: 700;
+        letter-spacing: .025rem;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+        border-radius: 2px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        text-align: center;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        border: none;
+        position: relative;
+        min-height: 48px;
+        -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .25);
+        -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, .25);
+        box-shadow: 0 1px 1px rgba(0, 0, 0, .25);
+        color: #000
+    }
 
-.create-profile-btn {
-    margin-top: 1cm;
-    margin-bottom: 1cm;
-    margin-left: 50%;
-	box-shadow: 3px 4px 0px 0px #899599;
-	background:linear-gradient(to bottom, #ededed 5%, #bab1ba 100%);
-	background-color:#ededed;
-	border-radius:15px;
-	border:1px solid #d6bcd6;
-	display:inline-block;
-	cursor:pointer;
-	color:#3a8a9e;
-	font-family:Arial;
-	font-size:17px;
-	padding:7px 25px;
-	text-decoration:none;
-	text-shadow:0px 1px 0px #e1e2ed;
-}
-.create-profile-btn:hover {
-	background:linear-gradient(to bottom, #bab1ba 5%, #ededed 100%);
-	background-color:#bab1ba;
-}
-.create-profile-btn:active {
-	position:relative;
-	top:1px;
-}
+    .nf-btn:disabled {
+        cursor: default;
+        opacity: .5;
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none
+    }
+
+    .nf-btn:hover {
+        text-decoration: none;
+        background: #d9d9d9
+    }
+
+    .nf-btn:active {
+        background: #ccc
+    }
+
+    .nf-btn-solid.nf-btn-primary {
+        color: #fff;
+        background-color: #e50914
+    }
+
+    .nf-btn-solid.nf-btn-primary:hover {
+        background-color: #f6121d
+    }
+
+    .nf-btn-solid.nf-btn-primary:active {
+        background-color: #e50914
+    }
+
+    .nf-btn-solid.nf-btn-primary:disabled {
+        opacity: .5
+    }
+
+    .nf-btn-solid.nf-btn-secondary {
+        color: #000;
+        background-color: #ccc
+    }
+
+    .nf-btn-solid.nf-btn-secondary:hover {
+        background: #d9d9d9
+    }
+
+    .nf-btn-solid.nf-btn-secondary:active {
+        background: #ccc
+    }
+
+    .nf-btn-solid.nf-btn-secondary:disabled {
+        color: #737373
+    }
+
+    .nf-btn {
+        position: relative;
+        font-size: 1rem;
+        padding: .75rem 1.33333333rem;
+        min-width: 74px;
+        min-height: 48px;
+        width: 100%
+    }
+
+    @media only screen and (min-width: 500px) {
+        .nf-btn {
+            width: auto
+        }
+    }
+
+    .nf-btn.nf-btn-small {
+        display: block;
+        padding: 0;
+        line-height: 50px
+    }
+
+    @media only screen and (min-width: 500px) {
+        .nf-btn.nf-btn-small {
+            display: inline-block;
+            font-size: 13px;
+            padding: .75rem 17.33333333px;
+            min-width: 98px;
+            min-height: 37px;
+            margin-right: .5rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            width: auto;
+            line-height: 1rem
+        }
+    }
+
+    .create-profile-btn {
+        margin-top: 1cm;
+        margin-bottom: 1cm;
+        margin-left: 50%;
+        box-shadow: 3px 4px 0px 0px #899599;
+        background: linear-gradient(to bottom, #ededed 5%, #bab1ba 100%);
+        background-color: #ededed;
+        border-radius: 15px;
+        border: 1px solid #d6bcd6;
+        display: inline-block;
+        cursor: pointer;
+        color: #3a8a9e;
+        font-family: Arial;
+        font-size: 17px;
+        padding: 7px 25px;
+        text-decoration: none;
+        text-shadow: 0px 1px 0px #e1e2ed;
+    }
+
+    .create-profile-btn:hover {
+        background: linear-gradient(to bottom, #bab1ba 5%, #ededed 100%);
+        background-color: #bab1ba;
+    }
+
+    .create-profile-btn:active {
+        position: relative;
+        top: 1px;
+    }
 
 </style>

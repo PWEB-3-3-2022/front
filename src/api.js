@@ -1,5 +1,5 @@
-// const API_BASE = 'https://tcflix.herokuapp.com';
-const API_BASE = process.env.NODE_ENV === 'production' ? 'https://tcflix.herokuapp.com' : 'http://127.0.0.1:3001';
+const API_BASE = 'https://tcflix.herokuapp.com';
+// const API_BASE = process.env.NODE_ENV === 'production' ? 'https://tcflix.herokuapp.com' : 'http://127.0.0.1:3001';
 
 export async function searchMedias(query, count = 10) {
   const response = await fetch(`${API_BASE}/medias/search?query=${query}&count=${count}`, {
@@ -54,39 +54,36 @@ export async function getAccountInfos() {
   return fetch(`${API_BASE}/me`, {
     credentials: 'include',
     headers: {
-      Accept: 'application/json', 'Content-Type': 'application/json',
+      Accept: 'application/json',
     },
   });
 }
 
-export async function changeProfileEmail(payload) {
-  return fetch(`${API_BASE}/me/changeProfileEmail`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    },
-  );
-}
-
-export async function deleteUserProfile(payload) {
-  return fetch(`${API_BASE}/me/deleteUserProfile`, {
-    method: 'POST',
+export async function changeProfileEmail(profileId, newEmail) {
+  return fetch(`${API_BASE}/me/profiles/${profileId}`, {
+    method: 'PUT',
     credentials: 'include',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(payload),
-  },
-  );
+    body: JSON.stringify({ newEmail }),
+  });
+}
+
+export async function deleteUserProfile(profileId) {
+  return fetch(`${API_BASE}/me/profiles/${profileId}`, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  });
 }
 
 export async function createUserProfile(payload) {
-  return fetch(`${API_BASE}/me/createUserProfile`, {
+  return fetch(`${API_BASE}/me/profiles`, {
     method: 'POST',
     credentials: 'include',
     headers: {
@@ -94,6 +91,5 @@ export async function createUserProfile(payload) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),
-  },
-  );
+  });
 }

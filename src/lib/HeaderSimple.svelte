@@ -1,18 +1,13 @@
 <script>
   import Logo from './Logo.svelte';
   import AccountDropdown from './AccountDropdown.svelte';
-  import * as account from '../account.js';
-
-  let loggedValue;
-  account.logged.subscribe((value) => {
-    loggedValue = value;
-  });
+  import { isLoggedIn, logged } from '../account.js';
 </script>
 
 <header>
     <Logo/>
 
-    {#if account.isLoggedIn() && loggedValue && loggedValue.email}
+    {#if isLoggedIn() && $logged && $logged.email}
         <AccountDropdown/>
     {:else}
         <a href="#/login" class="loginButton flex-none">S'identifier</a>
@@ -24,7 +19,7 @@
         height: 70px;
         max-height: 70px;
         padding-left: 60px;
-        background: linear-gradient(to bottom, rgba(0,0,0,.7) 10%, rgba(0,0,0,0));
+        background: linear-gradient(to bottom, rgba(0, 0, 0, .7) 10%, rgba(0, 0, 0, 0));
         display: flex;
         align-items: center;
     }

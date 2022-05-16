@@ -2,12 +2,7 @@
   import Logo from './Logo.svelte';
   import Searchbar from './Searchbar.svelte';
   import AccountDropdown from './AccountDropdown.svelte';
-  import * as account from '../account.js';
-
-  let loggedValue;
-  account.logged.subscribe((value) => {
-    loggedValue = value;
-  });
+  import { isLoggedIn, logged } from '../account.js';
 </script>
 
 <header class="bg-black p-2 text-xl text-red-600">
@@ -18,7 +13,7 @@
         <div class="basis-4/6 grow ml-60">
             <Searchbar/>
         </div>
-        {#if account.isLoggedIn() && loggedValue && loggedValue.email}
+        {#if isLoggedIn() && $logged && $logged.email}
             <AccountDropdown/>
         {:else}
             <a href="#/login" class="loginButton flex-none">S'identifier</a>

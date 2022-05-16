@@ -5,15 +5,14 @@ export function validateEmail(email) {
 }
 
 export function validateURL(url) {
-  var elm;
-  if(url !== "") {  
-    if(!elm) {
+  let elm;
+  if (url !== '') {
+    if (!elm) {
       elm = document.createElement('input');
       elm.setAttribute('type', 'url');
     }
     elm.value = url;
     return elm.validity.valid;
-  } else {
-    return false
   }
+  return false;
 }

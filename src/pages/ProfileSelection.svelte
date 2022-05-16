@@ -1,13 +1,14 @@
 <script>
-    import { getUserProfiles } from '../account.js';
-    let profiles = [];
-    getUserProfiles().then((prof) => {profiles = [...prof];});
+  import { get } from 'svelte/store';
+  import { logged } from '../account.js';
 
-    function OnClickProfile(id) {
-        const date = new Date().getDate();
-        const expirationDate = new Date().setDate(date + 7);
-        document.cookie = `profile=${id}; path=/; expires=${new Date(expirationDate).toUTCString()}`;
-    }
+  const { profiles } = get(logged);
+
+  function OnClickProfile(id) {
+    const date = new Date().getDate();
+    const expirationDate = new Date().setDate(date + 7);
+    document.cookie = `profile=${id}; path=/; expires=${new Date(expirationDate).toUTCString()}`;
+  }
 </script>
 
 <div class="page-container">
@@ -19,7 +20,7 @@
                     <li class="profile">
                         <a class="profile-link" href="#/profiles" on:click={() => OnClickProfile(i)}>
                             <img alt="profile icon" class="profile-icon"
-                                src={prof.picture}/>
+                                 src={prof.picture}/>
                             <span class="profile-name">{prof.name}</span>
                         </a>
                     </li>
