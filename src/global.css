@@ -1,3 +1,5 @@
+@import url(https://cdn.jsdelivr.net/npm/@vime/core@^5/themes/default.css);
+
 @tailwind utilities;
 @tailwind components;
 @tailwind base;
