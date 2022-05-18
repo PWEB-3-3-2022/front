@@ -93,3 +93,13 @@ export async function createUserProfile(payload) {
     body: JSON.stringify(payload),
   });
 }
+
+export async function logout() {
+  return fetch(`${API_BASE}/auth/logout`, {
+    credentials: 'include',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  });
+}
