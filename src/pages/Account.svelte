@@ -2,7 +2,7 @@
   import { push } from 'svelte-spa-router';
   import { get } from 'svelte/store';
   import * as api from '../api.js';
-  import { currentProfile, logged, reloadAccount } from '../account.js';
+  import { currentProfile, reloadAccount, logout } from '../account.js';
   import { validateEmail, validateURL } from '../utils';
 
   const expanded = [];
@@ -27,8 +27,7 @@
     if (response.ok) {
       const body = await response.json();
       if ('error' in body) {
-        document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        logged.set(null);
+        logout();
         await push('#/');
         return;
       }
@@ -55,8 +54,7 @@
         const body = await response.json();
         if ('error' in body) {
           if (body.error === 'InvalidTokenError') {
-            document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-            logged.set(null);
+            logout();
             await push('#/');
             return;
           }
@@ -75,6 +73,8 @@
           actionOnProfile = -1;
           success = '';
         }, 2000);
+      } else if (response.status === 400) {
+          error = 'Bad Request';
       }
     });
   }
@@ -86,8 +86,7 @@
         const body = await response.json();
         if ('error' in body) {
           if (body.error === 'InvalidTokenError') {
-            document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-            logged.set(null);
+            logout();
             await push('#/');
             return;
           }
@@ -127,8 +126,7 @@
           const body = await response.json();
           if ('error' in body) {
             if (body.error === 'InvalidTokenError') {
-              document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-              logged.set(null);
+              logout();
               await push('#/');
               return;
             }

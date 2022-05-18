@@ -1,6 +1,6 @@
 <script>
   import { push } from 'svelte-spa-router';
-  import { currentProfile, logged } from '../account';
+  import { currentProfile, logged, logout } from '../account';
 
   let showDropdownMenu = false;
 </script>
@@ -46,7 +46,7 @@
     <div class="py-1">
         <a class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
            href="#/"
-           on:click={() => { logged.set(null); push('#/'); }}>Se
+           on:click={() => { logout(); push('#/'); }}>Se
             déconnecter</a>
     </div>
 </div>
