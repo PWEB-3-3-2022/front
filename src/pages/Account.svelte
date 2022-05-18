@@ -269,67 +269,12 @@
                                                         </li>
                                                         <li class="account-section-item">
                                                             <a class="profile-link"
-                                                               data-uia="action-content-restrictions"
-                                                               href="/settings/restrictions/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
-                                                                <div class="profile-main">
-                                                                    <h4>Restrictions d&#x27;accès</h4>
-                                                                    <div>Pas de limitation d'accès.</div>
-                                                                </div>
-                                                                <div class="profile-change">Modifier</div>
-                                                            </a>
-                                                        </li>
-                                                        <li class="account-section-item">
-                                                            <a class="profile-link"
-                                                               data-uia="action-profile-lock"
-                                                               href="/settings/lock/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
-                                                                <div class="profile-main">
-                                                                    <h4>Verrouillage des profils</h4>
-                                                                    Désactivé
-                                                                </div>
-                                                                <div class="profile-change">Modifier</div>
-                                                            </a>
-                                                        </li>
-                                                        <li class="account-section-item">
-                                                            <a class="profile-link"
                                                                data-uia="action-viewing-activity"
                                                                href="/settings/viewed/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
                                                                 <div class="profile-main">
                                                                     <h4>Historique</h4>
                                                                 </div>
                                                                 <div class="profile-change">Afficher</div>
-                                                            </a>
-                                                        </li>
-                                                        <li class="account-section-item">
-                                                            <a class="profile-link"
-                                                               data-uia="action-rating-activity"
-                                                               href="/settings/rated/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
-                                                                <div class="profile-main">
-                                                                    <h4>Évaluations</h4>
-                                                                </div>
-                                                                <div class="profile-change">Afficher</div>
-                                                            </a>
-                                                        </li>
-                                                        <li class="account-section-item">
-                                                            <a class="profile-link"
-                                                               data-uia="action-subtitle-preferences"
-                                                               href="/settings/subtitles/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
-                                                                <div class="profile-main">
-                                                                    <h4>Affichage des sous-titres</h4>
-                                                                </div>
-                                                                <div class="profile-change">Modifier</div>
-                                                            </a>
-                                                        </li>
-                                                        <li class="account-section-item">
-                                                            <a class="profile-link"
-                                                               data-uia="action-video-quality"
-                                                               href="/settings/playback/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
-                                                                <div class="profile-main">
-                                                                    <h4>Paramètres de lecture</h4>
-                                                                    Lecture automatique de l&#x27;épisode suivant.
-                                                                    Lecture automatique des aperçus. Qualité audio et
-                                                                    vidéo par défaut.
-                                                                </div>
-                                                                <div class="profile-change">Modifier</div>
                                                             </a>
                                                         </li>
                                                         {#if i !== 0}
