@@ -2,7 +2,9 @@
   import { push } from 'svelte-spa-router';
   import { get } from 'svelte/store';
   import * as api from '../api.js';
-  import { currentProfile, reloadAccount, logout } from '../account.js';
+  import {
+    currentProfile, logout, profilesArray, reloadAccount,
+  } from '../account.js';
   import { validateEmail, validateURL } from '../utils';
 
   const expanded = [];
@@ -12,7 +14,7 @@
   let createdDate = '';
   let createdMonth = '';
   let createdYear = '';
-  let profiles = [];
+  let profiles = {};
   let actionOnProfile = -1;
   let hasTextEmail = true;
   let hasTextName = false;
@@ -27,7 +29,7 @@
     if (response.ok) {
       const body = await response.json();
       if ('error' in body) {
-        logout();
+        await logout();
         await push('#/');
         return;
       }
@@ -54,7 +56,7 @@
         const body = await response.json();
         if ('error' in body) {
           if (body.error === 'InvalidTokenError') {
-            logout();
+            await logout();
             await push('#/');
             return;
           }
@@ -74,7 +76,7 @@
           success = '';
         }, 2000);
       } else if (response.status === 400) {
-          error = 'Bad Request';
+        error = 'Bad Request';
       }
     });
   }
@@ -86,7 +88,7 @@
         const body = await response.json();
         if ('error' in body) {
           if (body.error === 'InvalidTokenError') {
-            logout();
+            await logout();
             await push('#/');
             return;
           }
@@ -126,7 +128,7 @@
           const body = await response.json();
           if ('error' in body) {
             if (body.error === 'InvalidTokenError') {
-              logout();
+              await logout();
               await push('#/');
               return;
             }
@@ -206,7 +208,7 @@
                             <div class="account-subsection clearfix">
                                 <div class="profile-hub">
                                     <ul>
-                                        {#each profiles as prof, i}
+                                        {#each $profilesArray as prof, i}
                                             {#if (prof != null)}
                                                 <li class="single-profile expanded"
                                                     class:expanded="{expanded[i]}"

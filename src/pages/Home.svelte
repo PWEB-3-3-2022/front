@@ -2,8 +2,8 @@
   import Mosaic from '../lib/Mosaic.svelte';
   import { homeMovies, homeTvshows } from '../api.js';
 
-  const movies = homeMovies();
-  const tvshows = homeTvshows();
+  const movies = homeMovies(10);
+  const tvshows = homeTvshows(10);
 </script>
 
 <div id="main">

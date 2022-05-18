@@ -32,9 +32,9 @@
      id="dropdownDivider">
     <div class="py-3 px-4 text-sm text-gray-900 dark:text-white">
         <div>Connecté en tant que</div>
-        <div class="font-semibold">{$logged.email}</div>
+        <div class="font-semibold">{$logged.name}</div>
     </div>
-    <ul aria-labelledby="dropdownDividerButton" class="py-1 text-sm text-gray-700 dark:text-gray-200">
+    <ul class="py-1 text-sm text-gray-700 dark:text-gray-200">
         <li>
             <a class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                href="#/profile">Changer de profil</a>

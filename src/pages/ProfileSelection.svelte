@@ -1,24 +1,15 @@
 <script>
-  import { get } from 'svelte/store';
-  import { logged } from '../account.js';
-
-  const { profiles } = get(logged);
-
-  function OnClickProfile(id) {
-    const date = new Date().getDate();
-    const expirationDate = new Date().setDate(date + 7);
-    document.cookie = `profile=${id}; path=/; expires=${new Date(expirationDate).toUTCString()}`;
-  }
+  import { profilesArray, setCurrentProfile } from '../account.js';
 </script>
 
 <div class="page-container">
     <div class="main-centered">
         <h1 class="profile-header">Choisissez votre profil</h1>
         <ul class="profile-list">
-            {#each profiles as prof, i}
+            {#each $profilesArray as prof, i}
                 {#if (prof != null)}
                     <li class="profile">
-                        <a class="profile-link" href="#/profiles" on:click={() => OnClickProfile(i)}>
+                        <a class="profile-link" href="#/" on:click={() => setCurrentProfile(prof.id)}>
                             <img alt="profile icon" class="profile-icon"
                                  src={prof.picture}/>
                             <span class="profile-name">{prof.name}</span>
