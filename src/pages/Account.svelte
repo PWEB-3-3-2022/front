@@ -259,7 +259,7 @@
                                                         <li class="account-section-item">
                                                             <a class="profile-link"
                                                                data-uia="action-language-preferences"
-                                                               href="/settings/language/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
+                                                               href="#/Account">
                                                                 <div class="profile-main">
                                                                     <h4>Langue</h4>
                                                                     français
@@ -270,7 +270,7 @@
                                                         <li class="account-section-item">
                                                             <a class="profile-link"
                                                                data-uia="action-viewing-activity"
-                                                               href="/settings/viewed/SMJKD7JPDJCV5DVVYXXDMGVDEQ">
+                                                               href="#/Account">
                                                                 <div class="profile-main">
                                                                     <h4>Historique</h4>
                                                                 </div>
