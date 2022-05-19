@@ -1,5 +1,5 @@
-const API_BASE = 'https://tcflix.herokuapp.com';
-// const API_BASE = process.env.NODE_ENV === 'production' ? 'https://tcflix.herokuapp.com' : 'http://127.0.0.1:3001';
+// const API_BASE = 'https://tcflix.herokuapp.com';
+const API_BASE = process.env.NODE_ENV === 'production' ? 'https://tcflix.herokuapp.com' : 'http://127.0.0.1:3001';
 
 export async function searchMedias(query, count = 10) {
   const response = await fetch(`${API_BASE}/medias/search?query=${query}&count=${count}`, {
@@ -27,6 +27,16 @@ export function homeTvshows(count = 6) {
       Accept: 'application/json',
     },
   });
+}
+
+export async function playMedia(id) {
+  const response = await fetch(`${API_BASE}/medias/${id}/play`, {
+    credentials: 'include',
+    headers: {
+      Accept: 'application/json',
+    },
+  });
+  return response.json();
 }
 
 export function login(payload) {

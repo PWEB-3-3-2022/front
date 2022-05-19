@@ -1,23 +1,29 @@
 <script>
-    import { Player, Video, DefaultUi } from '@vime/svelte';
+  import { DefaultUi, Player, Video } from '@vime/svelte';
+  import { playMedia } from '../api.js';
 
-    export let movie;
+  export let media;
+
+  const mediaSrc = playMedia(media._id).then((res) => res.src);
 </script>
 
-<Player>
-    <Video crossOrigin="" poster={movie.poster_small}>
-        <source data-src="https://media.vimejs.com/720p.mp4" type="video/mp4">
-    </Video>
+{#await mediaSrc}
+    <p>Loading ...</p>
+{:then src}
+    <Player>
+        <Video crossOrigin poster={media.poster_small} mediaTitle={media.title}>
+            <source data-src={src} type="video/mp4">
+        </Video>
 
-    <DefaultUi>
-    </DefaultUi>
-</Player>
-
-<h1>{movie.title}</h1>
-
-<h2>{movie.year} {movie.duration}</h2>
-
-<p>{movie.description}</p>
+        <DefaultUi>
+        </DefaultUi>
+    </Player>
+{:catch err}
+    <p style="color: red">Can't load media : {err}</p>
+{/await}
+<h1>{media.title}</h1>
+<h2>{media.year} {media.duration}</h2>
+<p>{media.description}</p>
 
 <style>
     h1 {
