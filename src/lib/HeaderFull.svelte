@@ -13,7 +13,7 @@
         <div class="basis-4/6 grow ml-60">
             <Searchbar/>
         </div>
-        {#if isLoggedIn() && $logged && $logged.email}
+        {#if isLoggedIn()}
             <AccountDropdown/>
         {:else}
             <a href="#/login" class="loginButton flex-none">S'identifier</a>

@@ -25,6 +25,7 @@
   let success = '';
   let createProfileName = '';
   let createProfilePic = '';
+  let newEmail = '';
 
   function changeProfileEmail(profileId, newEmail) {
     profileId = $profilesArray[profileId].id;
@@ -53,10 +54,9 @@
         }
 
         success = 'La nouvelle adresse mail a bien été définie.';
-        setTimeout(() => {
-          actionOnProfile = -1;
-          success = '';
-        }, 2000);
+        actionOnProfile = -1;
+        await reloadAccount();
+        success = '';
       } else if (response.status === 400) {
         error = 'Bad Request';
       }
@@ -64,7 +64,6 @@
   }
 
   function deleteProfile(targetProfileId) {
-    console.log($profilesArray[targetProfileId]);
     const profileId = $profilesArray[targetProfileId].id;
     error = '';
     api.deleteUserProfile(profileId).then(async (response) => {
@@ -86,6 +85,7 @@
         success = 'Le profil a bien été supprimé.';
         actionOnProfile = -1;
         await reloadAccount();
+        success = '';
         if (get(currentProfile).id === profileId) {
           currentProfile.set(null);
           await push('#/profile');
@@ -225,7 +225,7 @@
                                                                 <a class="profile-link"
                                                                    data-uia="action-{prof.email !== '' ? 'change' : 'add'}-profile-email"
                                                                    href="#/Account"
-                                                                   on:click={() => { actionOnProfile = prof.email === '' ? 1 : 2; targetProfileId = i; }}>
+                                                                   on:click={() => { actionOnProfile = prof.email === '' ? 1 : 2; targetProfileId = i; newEmail = $profilesArray[targetProfileId].email; }}>
 
 
                                                                     <div class="profile-main">
@@ -299,7 +299,7 @@
                             <div class="nfInput" data-uia="field-email+container">
                                 <div class="nfInputPlacement">
                                     <label class="input_id" placeholder="email">
-                                        <input id="id_email" bind:value={$profilesArray[targetProfileId].email}
+                                        <input id="id_email" bind:value={newEmail}
                                                class="nfTextField hasText" class:hasText={hasTextEmail}
                                                on:focus={() => { hasTextEmail = true; error = ''; }}
                                                on:blur={() => { if (document.getElementById('id_email').value === '') { hasTextEmail = false; } else { hasTextEmail = true; } }}
@@ -316,12 +316,12 @@
                     <div class="nf-btn-bar profile-email-buttons">
                         <button id="nf-btn-save" class="nf-btn nf-btn-primary nf-btn-solid nf-btn-small" type="button"
                                 autocomplete="off" tabindex="0" data-uia="save-profile-email" placeholder=""
-                                on:click={() => { changeProfileEmail(targetProfileId, $profilesArray[targetProfileId].email); }}>
+                                on:click={() => { changeProfileEmail(targetProfileId, newEmail); }}>
                             ENREGISTRER
                         </button>
                         <button id="btn-delete" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button"
                                 autocomplete="off" tabindex="0" data-uia="delete-profile-email" placeholder=""
-                                on:click={() => { changeProfileEmail(targetProfileId, ''); $profilesArray[targetProfileId].email = ''; }}>
+                                on:click={() => { changeProfileEmail(targetProfileId, ''); newEmail = ''; }}>
                             SUPPRIMER L'ADRESSE E-MAIL
                         </button>
                         <button id="btn-cancel" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button"
@@ -344,7 +344,7 @@
                             <div class="nfInput" data-uia="field-email+container">
                                 <div class="nfInputPlacement">
                                     <label class="input_id" placeholder="email">
-                                        <input id="id_email" bind:value={$profilesArray[targetProfileId].email}
+                                        <input id="id_email" bind:value={newEmail}
                                                class="nfTextField" class:hasText={hasTextEmail}
                                                on:focus={() => { hasTextEmail = true; error = ''; }}
                                                on:blur={() => { if (document.getElementById('id_email').value === '') { hasTextEmail = false; } else { hasTextEmail = true; } }}
@@ -361,7 +361,7 @@
                     <div class="nf-btn-bar profile-email-buttons">
                         <button id="nf-btn-save" class="nf-btn nf-btn-primary nf-btn-solid nf-btn-small" type="button"
                                 autocomplete="off" tabindex="0" data-uia="save-profile-email" placeholder=""
-                                on:click={() => { changeProfileEmail(targetProfileId, $profilesArray[targetProfileId].email); }}>
+                                on:click={() => { changeProfileEmail(targetProfileId, newEmail); }}>
                             ENREGISTRER
                         </button>
                         <button id="btn-cancel" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button"
