@@ -77,7 +77,7 @@ export async function changeProfileEmail(profileId, newEmail) {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ newEmail }),
+    body: JSON.stringify({ email: newEmail }),
   });
 }
 

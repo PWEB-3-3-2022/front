@@ -49,7 +49,7 @@ export function setCurrentProfile(id) {
   const date = new Date().getDate();
   const expirationDate = new Date().setDate(date + 7);
   document.cookie = `profile=${id}; path=/; expires=${new Date(expirationDate).toUTCString()}`;
-  currentProfile.set(get(logged).profiles[id]);
+  currentProfile.set({ id, ...get(logged).profiles[id] });
 }
 
 export function profilesAsArray() {

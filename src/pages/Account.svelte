@@ -14,7 +14,6 @@
   let createdDate = '';
   let createdMonth = '';
   let createdYear = '';
-  let profiles = {};
   let actionOnProfile = -1;
   let hasTextEmail = true;
   let hasTextName = false;
@@ -39,13 +38,13 @@
       createdDate = new Date(created);
       createdMonth = new Intl.DateTimeFormat('fr-FR', { month: 'long' }).format(createdDate);
       createdYear = createdDate.getFullYear();
-      profiles = body.profiles;
     } else if (response.status === 500) {
       // TODO
     }
   });
 
   function changeProfileEmail(profileId, newEmail) {
+    profileId = $profilesArray[profileId].id;
     if (newEmail !== '' && !validateEmail(newEmail)) {
       error = 'Veuillez saisir une adresse mail valide.';
       return;
@@ -81,7 +80,8 @@
     });
   }
 
-  function deleteProfile(profileId) {
+  function deleteProfile(targetProfileId) {
+    const profileId = $profilesArray[targetProfileId].id;
     error = '';
     api.deleteUserProfile(profileId).then(async (response) => {
       if (response.ok) {
@@ -100,11 +100,13 @@
           return;
         }
         success = 'Le profil a bien été supprimé.';
-        delete profiles[profileId];
+        delete $profilesArray[targetProfileId];
+        await reloadAccount();
         setTimeout(() => {
           actionOnProfile = -1;
           success = '';
-          if (get(currentProfile) === profileId) {
+          if (get(currentProfile).id === profileId) {
+            currentProfile.set(null);
             push('#/profile');
           }
         }, 2000);
@@ -122,7 +124,7 @@
       error = 'Le nom ne doit pas être vide.';
       return;
     }
-    api.createUserProfile({ profileName: name, profilePicture: picture })
+    api.createUserProfile({ name, picture })
       .then(async (response) => {
         if (response.ok) {
           const body = await response.json();
@@ -308,16 +310,16 @@
                 <form class="profile-email-form" data-uia="profile-email-form" method="post" novalidate="">
                     <h1>Modifier l'adresse e-mail du profil</h1>
                     <div class="profile-data">
-                        <img class="profile-icon" height="32" width="32" alt="{profiles[targetProfileId].name}"
-                             src="{profiles[targetProfileId].picture}">
-                        <span class="profile-name" data-uia="profile-name">{profiles[targetProfileId].name}</span>
+                        <img class="profile-icon" height="32" width="32" alt="{$profilesArray[targetProfileId].name}"
+                             src="{$profilesArray[targetProfileId].picture}">
+                        <span class="profile-name" data-uia="profile-name">{$profilesArray[targetProfileId].name}</span>
                     </div>
                     <ul class="simpleForm structural ui-grid">
                         <li class="nfFormSpace" data-uia="field-email+wrapper">
                             <div class="nfInput" data-uia="field-email+container">
                                 <div class="nfInputPlacement">
                                     <label class="input_id" placeholder="email">
-                                        <input id="id_email" bind:value={profiles[targetProfileId].email}
+                                        <input id="id_email" bind:value={$profilesArray[targetProfileId].email}
                                                class="nfTextField hasText" class:hasText={hasTextEmail}
                                                on:focus={() => { hasTextEmail = true; error = ''; }}
                                                on:blur={() => { if (document.getElementById('id_email').value === '') { hasTextEmail = false; } else { hasTextEmail = true; } }}
@@ -334,12 +336,12 @@
                     <div class="nf-btn-bar profile-email-buttons">
                         <button id="nf-btn-save" class="nf-btn nf-btn-primary nf-btn-solid nf-btn-small" type="button"
                                 autocomplete="off" tabindex="0" data-uia="save-profile-email" placeholder=""
-                                on:click={() => { changeProfileEmail(targetProfileId, profiles[targetProfileId].email); }}>
+                                on:click={() => { changeProfileEmail(targetProfileId, $profilesArray[targetProfileId].email); }}>
                             ENREGISTRER
                         </button>
                         <button id="btn-delete" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button"
                                 autocomplete="off" tabindex="0" data-uia="delete-profile-email" placeholder=""
-                                on:click={() => { changeProfileEmail(targetProfileId, ''); profiles[targetProfileId].email = ''; }}>
+                                on:click={() => { changeProfileEmail(targetProfileId, ''); $profilesArray[targetProfileId].email = ''; }}>
                             SUPPRIMER L'ADRESSE E-MAIL
                         </button>
                         <button id="btn-cancel" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button"
@@ -352,16 +354,16 @@
                 <form class="profile-email-form" data-uia="profile-email-form" method="post" novalidate="">
                     <h1>Ajouter une adresse e-mail au profil</h1>
                     <div class="profile-data">
-                        <img class="profile-icon" height="32" width="32" alt="{profiles[targetProfileId].name}"
-                             src="{profiles[targetProfileId].picture}">
-                        <span id="" class="profile-name" data-uia="profile-name">{profiles[targetProfileId].name}</span>
+                        <img class="profile-icon" height="32" width="32" alt="{$profilesArray[targetProfileId].name}"
+                             src="{$profilesArray[targetProfileId].picture}">
+                        <span id="" class="profile-name" data-uia="profile-name">{$profilesArray[targetProfileId].name}</span>
                     </div>
                     <ul class="simpleForm structural ui-grid">
                         <li class="nfFormSpace" data-uia="field-email+wrapper">
                             <div class="nfInput" data-uia="field-email+container">
                                 <div class="nfInputPlacement">
                                     <label class="input_id" placeholder="email">
-                                        <input id="id_email" bind:value={profiles[targetProfileId].email}
+                                        <input id="id_email" bind:value={$profilesArray[targetProfileId].email}
                                                class="nfTextField" class:hasText={hasTextEmail}
                                                on:focus={() => { hasTextEmail = true; error = ''; }}
                                                on:blur={() => { if (document.getElementById('id_email').value === '') { hasTextEmail = false; } else { hasTextEmail = true; } }}
@@ -378,7 +380,7 @@
                     <div class="nf-btn-bar profile-email-buttons">
                         <button id="nf-btn-save" class="nf-btn nf-btn-primary nf-btn-solid nf-btn-small" type="button"
                                 autocomplete="off" tabindex="0" data-uia="save-profile-email" placeholder=""
-                                on:click={() => { changeProfileEmail(targetProfileId, profiles[targetProfileId].email); }}>
+                                on:click={() => { changeProfileEmail(targetProfileId, $profilesArray[targetProfileId].email); }}>
                             ENREGISTRER
                         </button>
                         <button id="btn-cancel" class="nf-btn nf-btn-secondary nf-btn-solid nf-btn-small" type="button"
@@ -440,9 +442,9 @@
                     </div>
                 </form>
             {:else if actionOnProfile === 4}
-                <h1>Êtes-vous sûr de vouloir supprimer le profil <b>{profiles[targetProfileId].name}</b> ?</h1>
+                <h1>Êtes-vous sûr de vouloir supprimer le profil <b>{$profilesArray[targetProfileId].name}</b> ?</h1>
                 <img class="profile-icon" height="50" width="50" style="margin-bottom: 2cm;"
-                     alt="{profiles[targetProfileId].name}" src="{profiles[targetProfileId].picture}">
+                     alt="{$profilesArray[targetProfileId].name}" src="{$profilesArray[targetProfileId].picture}">
                 <p style="color: red;">{error}</p>
                 <p style="color: green;">{success}</p>
                 <div class="nf-btn-bar profile-email-buttons">
