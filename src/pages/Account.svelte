@@ -3,17 +3,19 @@
   import { get } from 'svelte/store';
   import * as api from '../api.js';
   import {
-    currentProfile, logout, profilesArray, reloadAccount,
+    currentProfile, isLoggedIn, logged, logout, profilesArray, reloadAccount,
   } from '../account.js';
   import { validateEmail, validateURL } from '../utils';
 
+  if (!isLoggedIn()) {
+    push('/login');
+  }
+
   const expanded = [];
-  let email = '';
-  let created = '';
-  let name = '';
-  let createdDate = '';
-  let createdMonth = '';
-  let createdYear = '';
+  const { email, created } = $logged;
+  const createdDate = new Date(created);
+  const createdMonth = new Intl.DateTimeFormat('fr-FR', { month: 'long' }).format(createdDate);
+  const createdYear = createdDate.getFullYear();
   let actionOnProfile = -1;
   let hasTextEmail = true;
   let hasTextName = false;
@@ -23,25 +25,6 @@
   let success = '';
   let createProfileName = '';
   let createProfilePic = '';
-
-  api.getAccountInfos().then(async (response) => {
-    if (response.ok) {
-      const body = await response.json();
-      if ('error' in body) {
-        await logout();
-        await push('#/');
-        return;
-      }
-      email = body.email;
-      name = body.name;
-      created = body.created;
-      createdDate = new Date(created);
-      createdMonth = new Intl.DateTimeFormat('fr-FR', { month: 'long' }).format(createdDate);
-      createdYear = createdDate.getFullYear();
-    } else if (response.status === 500) {
-      // TODO
-    }
-  });
 
   function changeProfileEmail(profileId, newEmail) {
     profileId = $profilesArray[profileId].id;
@@ -81,6 +64,7 @@
   }
 
   function deleteProfile(targetProfileId) {
+    console.log($profilesArray[targetProfileId]);
     const profileId = $profilesArray[targetProfileId].id;
     error = '';
     api.deleteUserProfile(profileId).then(async (response) => {
@@ -100,16 +84,12 @@
           return;
         }
         success = 'Le profil a bien été supprimé.';
-        delete $profilesArray[targetProfileId];
+        actionOnProfile = -1;
         await reloadAccount();
-        setTimeout(() => {
-          actionOnProfile = -1;
-          success = '';
-          if (get(currentProfile).id === profileId) {
-            currentProfile.set(null);
-            push('#/profile');
-          }
-        }, 2000);
+        if (get(currentProfile).id === profileId) {
+          currentProfile.set(null);
+          await push('#/profile');
+        }
       }
     });
   }
@@ -185,18 +165,18 @@
                                              data-uia="account-phone"></div>
                                     </div>
                                     <div class="account-section-group">
-                                        <div class="account-section-item"><a class="account-section-link"
-                                                                             data-uia="account-email-link"
-                                                                             href="#/">Modifier l&#x27;adresse
-                                            e-mail du compte</a></div>
-                                        <div class="account-section-item"><a class="account-section-link"
-                                                                             data-uia="account-password-link"
-                                                                             href="#/">Modifier le mot de
-                                            passe</a></div>
-                                        <div class="account-section-item"><a class="account-section-link"
-                                                                             data-uia="account-phone-link"
-                                                                             href="#/">Ajouter un
-                                            numéro de téléphone</a></div>
+                                        <div class="account-section-item">
+                                            <a class="account-section-link"
+                                               data-uia="account-email-link"
+                                               href="#/">Modifier l&#x27;adresse e-mail du compte</a></div>
+                                        <div class="account-section-item">
+                                            <a class="account-section-link"
+                                               data-uia="account-password-link"
+                                               href="#/">Modifier le mot de passe</a></div>
+                                        <div class="account-section-item">
+                                            <a class="account-section-link"
+                                               data-uia="account-phone-link"
+                                               href="#/">Ajouter un numéro de téléphone</a></div>
                                     </div>
                                 </div>
                             </div>
@@ -211,7 +191,7 @@
                                 <div class="profile-hub">
                                     <ul>
                                         {#each $profilesArray as prof, i}
-                                            {#if (prof != null)}
+                                            {#if prof != null}
                                                 <li class="single-profile expanded"
                                                     class:expanded="{expanded[i]}"
                                                     data-uia="single-profile-{i}" id="profile_{i}"
@@ -356,7 +336,8 @@
                     <div class="profile-data">
                         <img class="profile-icon" height="32" width="32" alt="{$profilesArray[targetProfileId].name}"
                              src="{$profilesArray[targetProfileId].picture}">
-                        <span id="" class="profile-name" data-uia="profile-name">{$profilesArray[targetProfileId].name}</span>
+                        <span id="" class="profile-name"
+                              data-uia="profile-name">{$profilesArray[targetProfileId].name}</span>
                     </div>
                     <ul class="simpleForm structural ui-grid">
                         <li class="nfFormSpace" data-uia="field-email+wrapper">

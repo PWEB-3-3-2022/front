@@ -1,13 +1,13 @@
 <script>
   import Logo from './Logo.svelte';
   import AccountDropdown from './AccountDropdown.svelte';
-  import { isLoggedIn, logged } from '../account.js';
+  import { isLoggedIn } from '../account.js';
 </script>
 
 <header>
     <Logo/>
 
-    {#if isLoggedIn() && $logged && $logged.email}
+    {#if isLoggedIn()}
         <AccountDropdown/>
     {:else}
         <a href="#/login" class="loginButton flex-none">S'identifier</a>

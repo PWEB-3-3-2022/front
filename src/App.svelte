@@ -30,7 +30,7 @@
 </script>
 
 {#if pageType === 'full'}
-    <FullPage {routes}>
+    <FullPage>
         <Router on:routeLoading={routeLoading} {routes}/>
     </FullPage>
 {:else if pageType === 'simple' }

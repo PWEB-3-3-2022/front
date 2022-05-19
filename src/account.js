@@ -15,6 +15,7 @@ export async function reloadAccount() {
   await api.getAccountInfos().then(async (res) => {
     if (res.ok) {
       const body = await res.json();
+      console.log(body);
       if ('error' in body) {
         logged.set(null);
       } else {
