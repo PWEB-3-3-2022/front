@@ -36,7 +36,7 @@
       email = body.email;
       name = body.name;
       created = body.created;
-      createdDate = new Date(parseInt(created, 10));
+      createdDate = new Date(created);
       createdMonth = new Intl.DateTimeFormat('fr-FR', { month: 'long' }).format(createdDate);
       createdYear = createdDate.getFullYear();
       profiles = body.profiles;
