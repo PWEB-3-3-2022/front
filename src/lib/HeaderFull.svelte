@@ -2,7 +2,7 @@
   import Logo from './Logo.svelte';
   import Searchbar from './Searchbar.svelte';
   import AccountDropdown from './AccountDropdown.svelte';
-  import { isLoggedIn, logged } from '../account.js';
+  import { logged } from '../account.js';
 </script>
 
 <header class="bg-black p-2 text-xl text-red-600">
@@ -13,7 +13,7 @@
         <div class="basis-4/6 grow ml-60">
             <Searchbar/>
         </div>
-        {#if isLoggedIn()}
+        {#if $logged !== null}
             <AccountDropdown/>
         {:else}
             <a href="#/login" class="loginButton flex-none">S'identifier</a>
